@@ -1,0 +1,27 @@
+.not-cached {
+    color: darkgray;
+}
+.cached {
+    font-weight: bold;
+}
+.bar.bar-footer p.title {
+    font-size: 14px;
+}
+
+.col-66 span {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+.multiline {
+    white-space: pre-line;
+}
+
+.col-33 div.button,
+.col-33 a.button,
+.col-33 button {
+    width: 100%;
+}

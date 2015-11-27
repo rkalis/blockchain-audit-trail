@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2015-2016 Eurocommercial Properties NV
+
+  Licensed under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.incode.app</groupId>
+        <artifactId>contactapp</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>contactapp-webapp</artifactId>
+    <name>Incode App ContactApp Webapp</name>
+
+    <description>This module runs both the Wicket viewer and the Restfulobjects viewer in a single webapp configured to run using the datanucleus object store.  It combines a number of the Isis addons.</description>
+
+    <packaging>war</packaging>
+
+
+    <properties>
+        <maven-war-plugin.warName>${project.parent.artifactId}</maven-war-plugin.warName>
+
+        <jetty.version>9.4.3.v20170317</jetty.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-io.version>2.4</commons-io.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.odavid.maven.plugins</groupId>
+                <artifactId>mixin-maven-plugin</artifactId>
+                <version>0.1-alpha-39</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <mixins>
+                        <mixin>
+                            <groupId>com.danhaywood.mavenmixin</groupId>
+                            <artifactId>standard</artifactId>
+                        </mixin>
+                        <mixin>
+                            <groupId>com.danhaywood.mavenmixin</groupId>
+                            <artifactId>jettywar</artifactId>
+                        </mixin>
+                        <mixin>
+                            <groupId>com.danhaywood.mavenmixin</groupId>
+                            <artifactId>jettyconsole</artifactId>
+                        </mixin>
+                    </mixins>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>contactapp-app</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.isis.mavendeps</groupId>
+            <artifactId>isis-mavendeps-webapp</artifactId>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.isis.mavendeps</groupId>
+            <artifactId>isis-mavendeps-intellij</artifactId>
+            <type>pom</type>
+        </dependency>
+
+        <!-- enable -parameters support -->
+        <dependency>
+            <groupId>org.isisaddons.metamodel.paraname8</groupId>
+            <artifactId>isis-metamodel-paraname8-dom</artifactId>
+        </dependency>
+
+<!--
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_3.0_spec</artifactId>
+        </dependency>
+-->
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.lazyluke</groupId>
+          <artifactId>log4jdbc-remix</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-api</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+
+        <!-- https://github.com/ebay/cors-filter -->
+        <dependency>
+            <groupId>org.ebaysf.web</groupId>
+            <artifactId>cors-filter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.isisaddons.module.togglz</groupId>
+            <artifactId>isis-module-togglz-glue</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-servlet</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-console</artifactId>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>resolving-conflicts</id>
+            <activation>
+                <property>
+                    <name>!skip.resolving-conflicts</name>
+                </property>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                        <version>${commons-io.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>commons-lang</groupId>
+                        <artifactId>commons-lang</artifactId>
+                        <version>${commons-lang.version}</version>
+                    </dependency>
+
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-continuation</artifactId>
+                        <version>${jetty.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-http</artifactId>
+                        <version>${jetty.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-io</artifactId>
+                        <version>${jetty.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-util</artifactId>
+                        <version>${jetty.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-servlet</artifactId>
+                        <version>${jetty.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-webapp</artifactId>
+                        <version>${jetty.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.eclipse.jetty.websocket</groupId>
+                        <artifactId>websocket-server</artifactId>
+                        <version>${jetty.version}</version>
+                    </dependency>
+
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>sqlserver</id>
+            <activation>
+                <property>
+                    <name>sqlserver</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!--
+                mvn install:install-file -Dfile=sqljdbc4.jar \
+                                         -DgroupId=com.microsoft.sqlserver \
+                                         -DartifactId=jdbc \
+                                         -Dversion=4.0 \
+                                         -Dpackaging=jar
+                 -->
+                <dependency>
+                    <groupId>com.microsoft.sqlserver</groupId>
+                    <artifactId>sqljdbc4</artifactId>
+                    <version>4.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+</project>

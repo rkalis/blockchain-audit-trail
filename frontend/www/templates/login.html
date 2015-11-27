@@ -1,0 +1,40 @@
+<ion-view view-title="Login" name="login-view" can-swipe-back="false">
+
+    <ion-header-bar align-title="center" class="bar-dark">
+        <h1 class="title">Eurocommercial Contacts</h1>
+    </ion-header-bar>
+
+
+    <ion-content class="padding">
+        <div class="card" ng-show="ctrl.error">
+
+            <div class="item item-text-wrap assertive">
+                <i class="icon ion-android-warning"></i>
+                {{ctrl.error}}
+            </div>
+        </div>
+
+        <div class="list list-inset">
+            <label class="item item-input">
+                <input type="text" placeholder="Username" ng-model="ctrl.credentials.username" >
+            </label>
+            <label class="item item-input">
+                <input type="password" placeholder="Password" ng-model="ctrl.credentials.password">
+            </label>
+        </div>
+        <button class="button button-block button-calm" ng-click="ctrl.login()">Login</button>
+
+    </ion-content>
+
+    <div class="bar bar-footer bar-dark" ng-if="ctrl.showEnvironment()">
+        <div class="button-bar">
+            <select class="button"
+                    ng-model="ctrl.environment"
+                    ng-change="ctrl.updateEnvironment()"
+            >
+                <option ng-repeat="env in ctrl.preferences.environment.options">{{::env.name}}</option>
+            </select>
+        </div>
+    </div>
+
+</ion-view>

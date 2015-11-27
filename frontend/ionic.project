@@ -1,0 +1,20 @@
+{
+  "name": "ECP ContactApp",
+  "app_id": "46d8098e",
+  "gulpStartupTasks": [
+    "sass",
+    "compile",
+    "watch"
+  ],
+  "documentRoot": "www",
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*"
+  ],
+  "proxies": [
+    {
+      "path": "/restful",
+      "proxyUrl": "http://localhost:8080/restful"
+    }
+  ]
+}

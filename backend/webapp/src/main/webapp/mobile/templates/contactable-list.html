@@ -1,0 +1,49 @@
+<ion-view view-title="Groups" can-swipe-back="false">
+
+    <ion-nav-bar class="bar-stable">
+
+        <ion-nav-buttons side="right">
+            <button class="button button-icon icon ion-ios-search-strong" ng-click="ctrl.showFilterBar()">
+            </button>
+        </ion-nav-buttons>
+
+        <ion-nav-buttons side="secondary">
+            <button class="button button-icon icon ion-android-more-vertical"
+                    ng-click="ctrl.showSideMenu()">
+            </button>
+        </ion-nav-buttons>
+
+
+    </ion-nav-bar>
+
+    <ion-content scroll="true" overflow-scroll="true">
+
+        <ion-list>
+            <!--
+            doesn't seem possible to put collection-repeat directive with ion-list; get error:
+            "collection-repeat tried to compute the height ... but was unable to. Please provide the "item-height" attribute
+            -->
+            <div collection-repeat="contactable in ctrl.contactables">
+                <ion-item
+                        class="item-avatar item-icon-left item-remove-animate"
+                        type="item-text-wrap"
+                        href="#/tab/contactables/{{contactable.$$instanceId}}" >
+                    <h3 class="{{ctrl.cachedStateCssClass(contactable)}}">
+                        <span>{{contactable.name}}</span>
+                    </h3>
+                    <div ng-if="contactable.type == 'Contact'">
+                        <p>{{contactable.company}}</p>
+                        <i class="icon ion-android-contact"></i>
+                    </div>
+                    <div ng-if="contactable.type == 'Contact Group'">
+                        <p>{{contactable.country}}</p>
+                        <i class="icon ion-android-contacts"></i>
+                    </div>
+                </ion-item>
+            </div>
+        </ion-list>
+
+        <p ng-show="ctrl.message">&nbsp;{{ ctrl.message }}</p>
+
+    </ion-content>
+</ion-view>

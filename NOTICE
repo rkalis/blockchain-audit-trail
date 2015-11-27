@@ -1,0 +1,20 @@
+ContactApp: a simple contact management app
+
+Copyright 2016 Eurocommercial Properties NV (http://www.eurocommercialproperties.com)
+
+Developed by incode (http://incode.org)
+
+Licensed under Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+
+This product uses various open source products, most notably:
+
+* Apache Isis (http://isis.apache.org), a software framework for building
+  domain-driven apps quickly, developed at The Apache Software Foundation (http://www.apache.org/).
+
+* Ionic Framework (http://ionicframework.com/), a front-end SDK for
+  developing hybrid mobile apps with web technologies.
+
+
+
+
+

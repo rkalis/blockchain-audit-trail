@@ -1,0 +1,18 @@
+.not-cached {
+    color: darkgray;
+}
+.cached {
+    font-weight: bold;
+}
+.bar.bar-footer p.title {
+    font-size: 14px;
+}
+
+.col-66 span {
+    vertical-align: -webkit-baseline-middle;
+}
+
+.col-33 a.button,
+.col-33 button {
+    width: 100%;
+}

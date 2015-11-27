@@ -1,0 +1,132 @@
+<ion-side-menus>
+
+    <ion-side-menu side="right">
+
+        <ion-content scroll="true" overflow-scroll="true">
+
+            <div class="card"  ng-show="ctrl.isOfflineEnabled()">
+                <div class="item item-text-wrap" ng-show="ctrl.isOfflineEnabled()">
+                    <button class="button button-balanced button-block"
+                            ng-click="ctrl.downloadContacts()"
+                            ng-disabled="ctrl.message"
+                    >
+                        <i class="ion-android-download">&nbsp;Download all contacts</i>
+                    </button>
+                </div>
+                <div class="item" ng-show="ctrl.message">
+                    <div class="row row-center">
+                        <div class="col col-center">
+                            <p>{{ctrl.message}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item" ng-show="true || isNotProduction()">
+                    <button class="button button-assertive button-block"
+                            ng-click="ctrl.removeDownloadedContacts()">
+                        <i class="ion-trash-b">&nbsp;Remove all</i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card" ng-show="false">
+                <div class="item" ng-if="!hasUpdate">
+                    <button class="button button-calm button-block"
+                            ng-click="checkForUpdates()" disabled>
+                        Check for app updates
+                    </button>
+                </div>
+                <div class="item" ng-if="hasUpdate">
+                    <button class="button button-energized button-block"
+                            ng-click="doUpdate()" disabled>
+                        Download app update
+                    </button>
+                </div>
+            </div>
+
+            <div class="list card">
+                <div class="item item-divider">
+                    About
+                </div>
+                <div class="item item-text-wrap">
+                    <p>- v0.5.20160215 (backend tidy-up)</p>
+                    <p>Previous:</p>
+                    <p>- v0.4.20160211.e (fix swipe-left blank page, tel/email buttons)</p>
+                    <p>- v0.3.20160203 (display order, better download)</p>
+                    <p>- v0.2.20160127 (auto login)</p>
+                    <p>- v0.1.20160126 (sidemenus)</p>
+                    <p>- v0.1.20160125 (more responsive, options tab)</p>
+                    <p>- v0.1.xxx (initial version)</p>
+                </div>
+            </div>
+
+            <div class="list card" ng-show="false">
+                <div class="item item-divider">
+                    Platform
+                </div>
+                <div class="item">
+                    {{ionicPlatform.platform}} {{ionicPlatform.platformVersion}}
+                    <br/>
+                    <p ng-show="ionicPlatform.isAndroid">running on Android</p>
+                    <p ng-show="ionicPlatform.isIOS">running on iOS</p>
+                    <p ng-show="ionicPlatform.isIPad">running on iPad</p>
+                    <p ng-show="ionicPlatform.isWindowsPhone">running on Windows Phone</p>
+                    <p ng-show="ionicPlatform.isWebView">running on (Cordova) Web View</p>
+                </div>
+                <div class="item">
+                    Device info:
+                <span ng-show="isDefinedWithLength(ionicPlatform.deviceInformation)">
+                    {{ionicPlatform.deviceInformation}}
+                </span>
+                <span ng-show="!isDefinedWithLength(ionicPlatform.deviceInformation)">
+                    (none available)
+                </span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="item item-text-wrap">
+                    You are logged in as {{ctrl.username}}
+                </div>
+                <div class="item">
+                    <button class="button button-energized button-block"
+                            ng-click="ctrl.logout()">
+                        <i class="ion-log-out">&nbsp;Force logout</i>
+                    </button>
+                </div>
+            </div>
+        </ion-content>
+
+    </ion-side-menu>
+
+    <ion-side-menu-content>
+        <ion-nav-view name="tab-contactables"></ion-nav-view>
+    </ion-side-menu-content>
+
+</ion-side-menus>
+
+
+
+
+
+
+<!--
+<ion-tabs class="tabs-icon-bottom tabs-stable">
+
+    <ion-tab title="Home"
+             icon-off="ion-android-home"
+             icon-on="ion-android-home"
+             href="#/tab/contacts">
+        <ion-nav-view name="tab-contactables"></ion-nav-view>
+    </ion-tab>
+
+    <ion-tab title="Options"
+             icon-off="ion-android-settings"
+             icon-on="ion-android-settings"
+             href="#/tab/options">
+        <ion-nav-view name="tab-options"></ion-nav-view>
+    </ion-tab>
+
+</ion-tabs>
+
+
+-->

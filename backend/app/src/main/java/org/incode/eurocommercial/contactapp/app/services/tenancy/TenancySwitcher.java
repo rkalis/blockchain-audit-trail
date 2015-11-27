@@ -1,0 +1,84 @@
+/*
+ *  Copyright 2015-2016 Eurocommercial Properties NV
+ *
+ *  Licensed under the Apache License, Version 2.0 (the
+ *  "License"); you may not use this file except in compliance
+ *  with the License.  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing,
+ *  software distributed under the License is distributed on an
+ *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  KIND, either express or implied.  See the License for the
+ *  specific language governing permissions and limitations
+ *  under the License.
+ */
+package org.incode.eurocommercial.contactapp.app.services.tenancy;
+
+import java.util.List;
+
+import org.apache.isis.applib.AbstractService;
+import org.apache.isis.applib.annotation.Action;
+import org.apache.isis.applib.annotation.ActionLayout;
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.annotation.DomainServiceLayout;
+import org.apache.isis.applib.annotation.NatureOfService;
+import org.apache.isis.applib.annotation.SemanticsOf;
+import org.apache.isis.applib.annotation.Where;
+
+import org.isisaddons.module.security.app.user.MeService;
+import org.isisaddons.module.security.dom.tenancy.ApplicationTenancy;
+import org.isisaddons.module.security.dom.tenancy.ApplicationTenancyRepository;
+import org.isisaddons.module.security.dom.user.ApplicationUser;
+
+import org.incode.eurocommercial.contactapp.app.services.homepage.HomePageService;
+import org.incode.eurocommercial.contactapp.app.services.homepage.HomePageViewModel;
+
+
+@DomainService(
+        nature = NatureOfService.VIEW_MENU_ONLY
+)
+@DomainServiceLayout(
+        menuBar = DomainServiceLayout.MenuBar.TERTIARY
+)
+public class TenancySwitcher extends AbstractService {
+
+
+    //region > switchTenancy (action)
+    @Action(
+            semantics = SemanticsOf.IDEMPOTENT,
+            hidden = Where.EVERYWHERE  // HIDDEN FOR NOW BECAUSE NO REQUIREMENT
+    )
+    @ActionLayout(
+            cssClassFa = "fa-exchange"
+    )
+    public HomePageViewModel switchTenancy(final ApplicationTenancy applicationTenancy) {
+        final ApplicationUser applicationUser = meService.me();
+        applicationUser.updateAtPath(applicationTenancy.getPath());
+        return homePageService.homePage();
+    }
+
+    public List<ApplicationTenancy> choices0SwitchTenancy() {
+        return applicationTenancyRepository.allTenancies();
+    }
+
+    public ApplicationTenancy default0SwitchTenancy() {
+        final ApplicationUser applicationUser = meService.me();
+        return applicationTenancyRepository.findByPath(applicationUser.getAtPath());
+    }
+    //endregion
+
+    //region > injected services
+    @javax.inject.Inject
+    private MeService meService;
+
+    @javax.inject.Inject
+    private ApplicationTenancyRepository applicationTenancyRepository;
+
+    @javax.inject.Inject
+    private HomePageService homePageService;
+    //endregion
+
+}
+
