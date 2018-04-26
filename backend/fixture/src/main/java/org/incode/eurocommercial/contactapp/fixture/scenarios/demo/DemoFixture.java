@@ -70,7 +70,6 @@ public class DemoFixture extends FixtureScript {
                         .from((List) objectsByClass.get(ContactImport.class))
                         .filter(Predicates.notNull())
                         .toList());
-
     }
 
     protected String getSpreadsheetBasename() {
