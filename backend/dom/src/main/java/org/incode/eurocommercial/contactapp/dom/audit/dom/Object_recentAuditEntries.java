@@ -85,15 +85,8 @@ public class Object_recentAuditEntries {
         }
     };
 
-    @Inject
-    private MetaModelService3 metaModelService3;
-
-    @Inject
-    ApplicationFeatureRepository applicationFeatureRepository;
-
-    @Inject
-    AuditingServiceRepository auditingServiceRepository;
-
-    @Inject
-    BookmarkService2 bookmarkService;
+    @Inject private MetaModelService3 metaModelService3;
+    @Inject ApplicationFeatureRepository applicationFeatureRepository;
+    @Inject AuditingServiceRepository auditingServiceRepository;
+    @Inject BookmarkService2 bookmarkService;
 }

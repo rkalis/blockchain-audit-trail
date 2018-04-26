@@ -75,12 +75,8 @@ public class AuditingServiceMenu {
     //endregion
 
     //region > injected services
-    @Inject
-    private AuditingServiceRepository auditingServiceRepository;
-    
-    @Inject
-    private ClockService clockService;
+    @Inject private AuditingServiceRepository auditingServiceRepository;
+    @Inject private ClockService clockService;
     //endregion
-
 }
 

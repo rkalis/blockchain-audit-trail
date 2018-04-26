@@ -49,8 +49,5 @@ public class AuditerServiceUsingJdo implements AuditerService {
         repositoryService.persist(auditEntry);
     }
 
-
-    @Inject
-    RepositoryService repositoryService;
-
+    @Inject RepositoryService repositoryService;
 }

@@ -4,10 +4,16 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
+import javax.inject.Inject;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.DatastoreIdentity;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Index;
 import javax.jdo.annotations.Indices;
 import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Queries;
+import javax.jdo.annotations.Query;
 
 import org.apache.isis.applib.DomainObjectContainer;
 import org.apache.isis.applib.Identifier;
@@ -34,15 +40,15 @@ import org.incode.eurocommercial.contactapp.dom.audit.AuditModule;
 import lombok.Getter;
 import lombok.Setter;
 
-@javax.jdo.annotations.PersistenceCapable(
+@PersistenceCapable(
         identityType=IdentityType.DATASTORE,
         schema = "isisaudit",
         table="AuditEntry")
-@javax.jdo.annotations.DatastoreIdentity(
+@DatastoreIdentity(
         strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY,
         column="id")
-@javax.jdo.annotations.Queries( {
-    @javax.jdo.annotations.Query(
+@Queries( {
+    @Query(
             name="findRecentByTargetAndPropertyId", language="JDOQL",
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
@@ -50,12 +56,12 @@ import lombok.Setter;
                     + "&&    propertyId == :propertyId "
                     + "ORDER BY timestamp DESC "
                     + "RANGE 0,30"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTransactionId", language="JDOQL",
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
                     + "WHERE transactionId == :transactionId"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTargetAndTimestampBetween", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
@@ -63,46 +69,46 @@ import lombok.Setter;
                     + "&&    timestamp >= :from "
                     + "&&    timestamp <= :to "
                     + "ORDER BY timestamp DESC"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTargetAndTimestampAfter", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
                     + "WHERE targetStr == :targetStr " 
                     + "&&    timestamp >= :from "
                     + "ORDER BY timestamp DESC"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTargetAndTimestampBefore", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
                     + "WHERE targetStr == :targetStr " 
                     + "&&    timestamp <= :to "
                     + "ORDER BY timestamp DESC"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTarget", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
                     + "WHERE targetStr == :targetStr " 
                     + "ORDER BY timestamp DESC"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTimestampBetween", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
                     + "WHERE timestamp >= :from " 
                     + "&&    timestamp <= :to "
                     + "ORDER BY timestamp DESC"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTimestampAfter", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
                     + "WHERE timestamp >= :from "
                     + "ORDER BY timestamp DESC"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="findByTimestampBefore", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
                     + "WHERE timestamp <= :to "
                     + "ORDER BY timestamp DESC"),
-    @javax.jdo.annotations.Query(
+    @Query(
             name="find", language="JDOQL",  
             value="SELECT "
                     + "FROM org.incode.eurocommercial.contactapp.dom.audit.dom.AuditEntry "
@@ -111,10 +117,10 @@ import lombok.Setter;
 @Indices({
     @Index(name="AuditEntry_ak", unique="true",
             columns={
-                @javax.jdo.annotations.Column(name="transactionId"),
-                @javax.jdo.annotations.Column(name="sequence"),
-                @javax.jdo.annotations.Column(name="target"),
-                @javax.jdo.annotations.Column(name="propertyId")
+                @Column(name="transactionId"),
+                @Column(name="sequence"),
+                @Column(name="target"),
+                @Column(name="propertyId")
                 })
 })
 @DomainObject(
@@ -157,7 +163,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     public static class UserDomainEvent extends PropertyDomainEvent<String> {
     }
 
-    @javax.jdo.annotations.Column(allowsNull="false", length=JdoColumnLength.USER_NAME)
+    @Column(allowsNull="false", length=JdoColumnLength.USER_NAME)
     @Property(
             domainEvent = UserDomainEvent.class
     )
@@ -179,7 +185,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     public static class TimestampDomainEvent extends PropertyDomainEvent<Timestamp> {
     }
 
-    @javax.jdo.annotations.Column(allowsNull="false")
+    @Column(allowsNull="false")
     @Property(
             domainEvent = TimestampDomainEvent.class
     )
@@ -210,7 +216,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
      * alternative key.
      * </p>
      */
-    @javax.jdo.annotations.Column(allowsNull="false", length=JdoColumnLength.TRANSACTION_ID)
+    @Column(allowsNull="false", length=JdoColumnLength.TRANSACTION_ID)
     @Property(
             domainEvent = TransactionIdDomainEvent.class,
             editing = Editing.DISABLED
@@ -243,7 +249,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
      * alternative key.
      * </p>
      */
-    @javax.jdo.annotations.Column(allowsNull="false")
+    @Column(allowsNull="false")
     @Property(
             domainEvent = SequenceDomainEvent.class,
             editing = Editing.DISABLED
@@ -262,7 +268,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     public static class TargetClassDomainEvent extends PropertyDomainEvent<String> {
     }
 
-    @javax.jdo.annotations.Column(allowsNull="true", length=JdoColumnLength.TARGET_CLASS)
+    @Column(allowsNull="true", length=JdoColumnLength.TARGET_CLASS)
     @Property(
             domainEvent = TargetClassDomainEvent.class
     )
@@ -285,7 +291,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     public static class TargetStrDomainEvent extends PropertyDomainEvent<String> {
     }
 
-    @javax.jdo.annotations.Column(allowsNull="true", length=JdoColumnLength.BOOKMARK, name="target")
+    @Column(allowsNull="true", length=JdoColumnLength.BOOKMARK, name="target")
     @Property(
             domainEvent = TargetStrDomainEvent.class
     )
@@ -306,7 +312,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
      * This is the fully-qualified class and property Id, as per
      * {@link Identifier#toClassAndNameIdentityString()}.
      */
-    @javax.jdo.annotations.Column(allowsNull="true", length=JdoColumnLength.MEMBER_IDENTIFIER)
+    @Column(allowsNull="true", length=JdoColumnLength.MEMBER_IDENTIFIER)
     @Property(
             domainEvent = MemberIdentifierDomainEvent.class
     )
@@ -331,7 +337,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     /**
      * This is the property name (without the class).
      */
-    @javax.jdo.annotations.Column(allowsNull="true", length=JdoColumnLength.AuditEntry.PROPERTY_ID)
+    @Column(allowsNull="true", length=JdoColumnLength.AuditEntry.PROPERTY_ID)
     @Property(
             domainEvent = PropertyIdDomainEvent.class
     )
@@ -353,7 +359,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     public static class PreValueDomainEvent extends PropertyDomainEvent<String> {
     }
 
-    @javax.jdo.annotations.Column(allowsNull="true", length=JdoColumnLength.AuditEntry.PROPERTY_VALUE)
+    @Column(allowsNull="true", length=JdoColumnLength.AuditEntry.PROPERTY_VALUE)
     @Property(
             domainEvent = PreValueDomainEvent.class
     )
@@ -374,7 +380,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     public static class PostValueDomainEvent extends PropertyDomainEvent<String> {
     }
 
-    @javax.jdo.annotations.Column(allowsNull="true", length=JdoColumnLength.AuditEntry.PROPERTY_VALUE)
+    @Column(allowsNull="true", length=JdoColumnLength.AuditEntry.PROPERTY_VALUE)
     @Property(
             domainEvent = PostValueDomainEvent.class
     )
@@ -418,11 +424,7 @@ public class AuditEntry extends DomainChangeJdoAbstract implements HasTransactio
     //endregion
 
     //region > Injected services
-    @javax.inject.Inject
-    private BookmarkService bookmarkService;
-
-    @javax.inject.Inject
-    private DomainObjectContainer container;
+    @Inject private BookmarkService bookmarkService;
+    @Inject private DomainObjectContainer container;
     //endregion
-
 }

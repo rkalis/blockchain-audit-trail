@@ -125,8 +125,5 @@ public class AuditingServiceRepository {
                 :null;
     }
 
-    @Inject
-    RepositoryService repositoryService;
-
-
+    @Inject RepositoryService repositoryService;
 }
