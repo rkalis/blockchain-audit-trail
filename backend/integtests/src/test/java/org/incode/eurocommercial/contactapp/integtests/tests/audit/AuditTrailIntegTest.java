@@ -25,6 +25,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 
+import org.incode.eurocommercial.contactapp.dom.audit.AuditEntry;
 import org.incode.eurocommercial.contactapp.dom.audit.contracts.generated.AuditTrail;
 import org.incode.eurocommercial.contactapp.fixture.contracts.GanacheAccounts;
 import org.incode.eurocommercial.contactapp.integtests.tests.ContactAppIntegTest;
@@ -62,14 +63,16 @@ public class AuditTrailIntegTest extends ContactAppIntegTest {
         @Test
         public void can_add_to_audit_trail() throws Exception {
             // given
-            String valueToAudit = "Hello World!";
+            String preValue = "Hello World!";
+            String postValue = "Hi Y'all!";
 
             // when
-            auditTrail.audit(valueToAudit).send();
+            auditTrail.audit(preValue, postValue).send();
 
             // then
-            assertThat(auditTrail.auditEntries(BigInteger.ZERO).send()).isEqualTo(valueToAudit);
-//            assertThat(auditTrail.isValid());
+            AuditEntry auditEntry = AuditEntry.fromTuple(auditTrail.auditEntries(BigInteger.ZERO).send());
+            assertThat(auditEntry.getPreValue()).isEqualTo(preValue);
+            assertThat(auditEntry.getPostValue()).isEqualTo(postValue);
         }
     }
 }

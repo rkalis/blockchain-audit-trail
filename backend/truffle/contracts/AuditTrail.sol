@@ -5,7 +5,6 @@ contract AuditTrail {
     AuditEntry[] public auditEntries;
 
     struct AuditEntry {
-        string value;
         // private String user;
         // public String getUsername() {return getUser();}
         // private Timestamp timestamp;
@@ -15,11 +14,11 @@ contract AuditTrail {
         // private String targetStr;
         // private String memberIdentifier;
         // private String propertyId;
-        // private String preValue;
-        // private String postValue;
+        string preValue;
+        string postValue;
     }
 
-    event Audit(string value);
+    event Audit(string preValue, string postValue);
 
     modifier ownerOnly {
         require(msg.sender == owner);
@@ -34,8 +33,8 @@ contract AuditTrail {
         selfdestruct(owner);
     }
 
-    function audit(string value) external ownerOnly {
-        auditEntries.push(AuditEntry(value));
-        emit Audit(value);
+    function audit(string preValue, string postValue) external ownerOnly {
+        auditEntries.push(AuditEntry(preValue, postValue));
+        emit Audit(preValue, postValue);
     }
 }
