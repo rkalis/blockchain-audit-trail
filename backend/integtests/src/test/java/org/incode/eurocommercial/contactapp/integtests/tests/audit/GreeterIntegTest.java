@@ -26,14 +26,14 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 
 import org.incode.eurocommercial.contactapp.dom.audit.contracts.generated.Greeter;
+import org.incode.eurocommercial.contactapp.fixture.contracts.GanacheAccounts;
 import org.incode.eurocommercial.contactapp.integtests.tests.ContactAppIntegTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AuditIntegTest extends ContactAppIntegTest {
+public class GreeterIntegTest extends ContactAppIntegTest {
     Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
-    String TEST_ACCOUNT_PRIVATE_KEY = "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3";
-    Credentials TEST_CREDENTIALS = Credentials.create(TEST_ACCOUNT_PRIVATE_KEY);
+    final Credentials TEST_CREDENTIALS = GanacheAccounts.TEST_ACCOUNT_CREDENTIALS.get(0);
     final String GREETING = "Hello World!";
     Greeter greeter;
 
@@ -53,7 +53,7 @@ public class AuditIntegTest extends ContactAppIntegTest {
         greeter.kill().send();
     }
 
-    public static class DeployContract extends AuditIntegTest {
+    public static class DeployContract extends GreeterIntegTest {
         @Test
         public void can_deploy_contract() throws Exception {
             assertThat(greeter.greet().send()).isEqualTo(GREETING);
