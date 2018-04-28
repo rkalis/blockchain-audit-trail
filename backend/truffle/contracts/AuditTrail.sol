@@ -1,8 +1,8 @@
 pragma solidity 0.4.23;
 
 contract AuditTrail {
-    address owner;
-    AuditEntry[] auditEntries;
+    address public owner;
+    AuditEntry[] public auditEntries;
 
     struct AuditEntry {
         string value;
@@ -19,11 +19,12 @@ contract AuditTrail {
         // private String postValue;
     }
 
+    event Audit(string value);
+
     modifier ownerOnly {
         require(msg.sender == owner);
         _;
     }
-
 
     constructor() public {
         owner = msg.sender;
@@ -35,5 +36,6 @@ contract AuditTrail {
 
     function audit(string value) external ownerOnly {
         auditEntries.push(AuditEntry(value));
+        emit Audit(value);
     }
 }

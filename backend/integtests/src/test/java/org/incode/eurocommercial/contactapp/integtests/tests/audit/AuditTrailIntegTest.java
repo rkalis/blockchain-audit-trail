@@ -58,4 +58,18 @@ public class AuditTrailIntegTest extends ContactAppIntegTest {
         }
     }
 
+    public static class Audit extends AuditTrailIntegTest {
+        @Test
+        public void can_add_to_audit_trail() throws Exception {
+            // given
+            String valueToAudit = "Hello World!";
+
+            // when
+            auditTrail.audit(valueToAudit).send();
+
+            // then
+            assertThat(auditTrail.auditEntries(BigInteger.ZERO).send()).isEqualTo(valueToAudit);
+//            assertThat(auditTrail.isValid());
+        }
+    }
 }
