@@ -18,30 +18,28 @@ package org.incode.eurocommercial.contactapp.integtests.tests.audit;
 
 import java.math.BigInteger;
 
+import javax.inject.Inject;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.http.HttpService;
 
 import org.incode.eurocommercial.contactapp.dom.audit.AuditEntry;
+import org.incode.eurocommercial.contactapp.dom.audit.Web3Service;
 import org.incode.eurocommercial.contactapp.dom.audit.contracts.generated.AuditTrail;
-import org.incode.eurocommercial.contactapp.fixture.contracts.GanacheAccounts;
 import org.incode.eurocommercial.contactapp.integtests.tests.ContactAppIntegTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuditTrailIntegTest extends ContactAppIntegTest {
-    Web3j web3j = Web3j.build(new HttpService("http://localhost:8545"));
-    final Credentials TEST_CREDENTIALS = GanacheAccounts.TEST_ACCOUNT_CREDENTIALS.get(0);
+    @Inject Web3Service web3Service;
     AuditTrail auditTrail;
 
     @Before
     public void setUp() throws Exception {
         auditTrail = AuditTrail.deploy(
-                web3j,
-                TEST_CREDENTIALS,
+                web3Service.getWeb3j(),
+                web3Service.getCredentials(),
                 new BigInteger("240000"),
                 new BigInteger("2400000")
         ).send();

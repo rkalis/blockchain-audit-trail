@@ -14,7 +14,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.incode.eurocommercial.contactapp.fixture.contracts;
+package org.incode.eurocommercial.contactapp.dom.audit;
 
 import java.util.List;
 import java.util.stream.Collectors;
