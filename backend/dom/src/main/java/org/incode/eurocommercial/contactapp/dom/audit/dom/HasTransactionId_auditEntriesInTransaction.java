@@ -2,6 +2,8 @@ package org.incode.eurocommercial.contactapp.dom.audit.dom;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.ActionLayout;
 import org.apache.isis.applib.annotation.CollectionLayout;
@@ -43,9 +45,7 @@ public class HasTransactionId_auditEntriesInTransaction {
     //endregion
 
     //region > injected services
-
-    @javax.inject.Inject
-    private AuditingServiceRepository auditEntryRepository;
+    @Inject private AuditingServiceRepository auditEntryRepository;
     //endregion
 
 }

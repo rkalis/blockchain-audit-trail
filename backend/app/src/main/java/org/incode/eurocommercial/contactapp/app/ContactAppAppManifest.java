@@ -63,5 +63,4 @@ public class ContactAppAppManifest extends AppManifestAbstract {
         super(BUILDER);
     }
 
-
 }

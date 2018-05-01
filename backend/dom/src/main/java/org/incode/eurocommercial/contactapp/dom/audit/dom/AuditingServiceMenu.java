@@ -60,7 +60,8 @@ public class AuditingServiceMenu {
             final LocalDate from,
             @Parameter(optionality=Optionality.OPTIONAL)
             @ParameterLayout(named="To")
-            final LocalDate to) {
+            final LocalDate to
+    ) {
         return auditingServiceRepository.findByFromAndTo(from, to);
     }
     public boolean hideFindAuditEntries() {

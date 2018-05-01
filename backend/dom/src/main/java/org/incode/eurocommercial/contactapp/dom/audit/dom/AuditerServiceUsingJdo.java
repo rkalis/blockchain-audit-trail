@@ -25,10 +25,14 @@ public class AuditerServiceUsingJdo implements AuditerService {
     public void audit(
             final UUID transactionId,
             final int sequence,
-            String targetClass, final Bookmark target,
-            String memberIdentifier, final String propertyId, 
-            final String preValue, final String postValue, 
-            final String user, final java.sql.Timestamp timestamp) {
+            String targetClass,
+            final Bookmark target,
+            String memberIdentifier,
+            final String propertyId,
+            final String preValue,
+            final String postValue,
+            final String user,
+            final java.sql.Timestamp timestamp) {
         
         final AuditEntry auditEntry = repositoryService.instantiate(AuditEntry.class);
         

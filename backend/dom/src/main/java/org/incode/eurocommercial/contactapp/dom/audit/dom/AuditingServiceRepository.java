@@ -31,7 +31,8 @@ public class AuditingServiceRepository {
 
     public List<AuditEntry> findRecentByTargetAndPropertyId(
             final Bookmark target,
-            final String propertyId) {
+            final String propertyId
+    ) {
         final String targetStr = target.toString();
         return repositoryService.allMatches(
                 new QueryDefault<>(AuditEntry.class,
@@ -53,7 +54,8 @@ public class AuditingServiceRepository {
     public List<AuditEntry> findByTargetAndFromAndTo(
             final Bookmark target, 
             final LocalDate from, 
-            final LocalDate to) {
+            final LocalDate to
+    ) {
         final String targetStr = target.toString();
         final Timestamp fromTs = toTimestampStartOfDayWithOffset(from, 0);
         final Timestamp toTs = toTimestampStartOfDayWithOffset(to, 1);
@@ -90,7 +92,8 @@ public class AuditingServiceRepository {
     @Programmatic
     public List<AuditEntry> findByFromAndTo(
             final LocalDate from, 
-            final LocalDate to) {
+            final LocalDate to
+    ) {
         final Timestamp fromTs = toTimestampStartOfDayWithOffset(from, 0);
         final Timestamp toTs = toTimestampStartOfDayWithOffset(to, 1);
         
@@ -120,9 +123,9 @@ public class AuditingServiceRepository {
     }
 
     private static Timestamp toTimestampStartOfDayWithOffset(final LocalDate dt, final int daysOffset) {
-        return dt!=null
-                ?new java.sql.Timestamp(dt.toDateTimeAtStartOfDay().plusDays(daysOffset).getMillis())
-                :null;
+        return dt != null
+                ? new java.sql.Timestamp(dt.toDateTimeAtStartOfDay().plusDays(daysOffset).getMillis())
+                : null;
     }
 
     @Inject RepositoryService repositoryService;
