@@ -19,7 +19,8 @@ package org.incode.eurocommercial.contactapp.dom.audit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.assertj.core.util.Lists;
+import com.google.common.collect.Lists;
+
 import org.web3j.crypto.Credentials;
 
 public class GanacheAccounts {
