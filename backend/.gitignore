@@ -1,3 +1,5 @@
+webapp/src/main/webapp/WEB-INF/authentication.properties
+
 *~
 *.swp
 *.class
