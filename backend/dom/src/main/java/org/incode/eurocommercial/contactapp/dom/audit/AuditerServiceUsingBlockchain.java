@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import com.google.common.base.Strings;
+
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -33,8 +35,15 @@ public class AuditerServiceUsingBlockchain implements AuditerService {
             final String user,
             final java.sql.Timestamp timestamp
     ) {
-
+        try {
+            web3Service.getAuditTrailContract().audit(
+                    Strings.nullToEmpty(preValue),
+                    Strings.nullToEmpty(postValue)
+            ).send();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    @Inject Web3Service web3Service;
+    @Inject private Web3Service web3Service;
 }
