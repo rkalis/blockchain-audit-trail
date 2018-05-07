@@ -48,6 +48,7 @@ import org.apache.isis.applib.annotation.Optionality;
 import org.apache.isis.applib.annotation.Parameter;
 import org.apache.isis.applib.annotation.ParameterLayout;
 import org.apache.isis.applib.annotation.Property;
+import org.apache.isis.applib.annotation.Publishing;
 import org.apache.isis.applib.annotation.RenderType;
 import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntityAdapter;
@@ -90,7 +91,8 @@ import lombok.Setter;
                         + "WHERE contactRoles.isEmpty() ")
 })
 @DomainObject(
-        editing = Editing.DISABLED
+        editing = Editing.DISABLED,
+        publishing = Publishing.ENABLED
 )
 @DomainObjectLayout(
         paged = 1000
