@@ -12,7 +12,8 @@ import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.abi.datatypes.generated.Bytes28;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
@@ -35,7 +36,7 @@ import rx.functions.Func1;
  * <p>Generated with web3j version 3.3.1.
  */
 public class AuditTrail extends Contract {
-    private static final String BINARY = "0x608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555061053d806100606000396000f300608060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806341c0e1b51461006757806382b9f2621461007e5780638da5cb5b146100b9578063d95a5f1614610110575b600080fd5b34801561007357600080fd5b5061007c6101b6565b005b34801561008a57600080fd5b506100b760048036038101908080359060200190820180359060200191909192939192939050505061024b565b005b3480156100c557600080fd5b506100ce610386565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561011c57600080fd5b5061013b600480360381019080803590602001909291905050506103ab565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101561017b578082015181840152602081019050610160565b50505050905090810190601f1680156101a85780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561021157600080fd5b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16ff5b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161415156102a657600080fd5b600160206040519081016040528084848080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050815250908060018154018082558091505090600182039060005260206000200160009091929091909150600082015181600001908051906020019061032d92919061046c565b505050507f699d391aca8d4d4d43e61892e60e3baac3d506825f8f3de8acfbc998d949a3088282604051808060200182810382528484828181526020019250808284378201915050935050505060405180910390a15050565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6001818154811015156103ba57fe5b90600052602060002001600091509050806000018054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156104625780601f1061043757610100808354040283529160200191610462565b820191906000526020600020905b81548152906001019060200180831161044557829003601f168201915b5050505050905081565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106104ad57805160ff19168380011785556104db565b828001600101855582156104db579182015b828111156104da5782518255916020019190600101906104bf565b5b5090506104e891906104ec565b5090565b61050e91905b8082111561050a5760008160009055506001016104f2565b5090565b905600a165627a7a72305820f1c9136fc97da8c57855d8923af478c0393ee6201da08a2426c772a4a5877ed90029";
+    private static final String BINARY = "0x608060405234801561001057600080fd5b50336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506105d8806100606000396000f300608060405260043610610078576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806341c0e1b51461007d5780638da5cb5b146100945780638e598f18146100eb5780639d9fef841461013a578063cce315ea1461017c578063d272817b146101cc575b600080fd5b34801561008957600080fd5b5061009261020e565b005b3480156100a057600080fd5b506100a96102a3565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b3480156100f757600080fd5b50610116600480360381019080803590602001909291905050506102c8565b604051808263ffffffff191663ffffffff1916815260200191505060405180910390f35b34801561014657600080fd5b5061017a600480360381019080803563ffffffff1916906020019092919080356000191690602001909291905050506102f7565b005b34801561018857600080fd5b506101ae600480360381019080803563ffffffff191690602001909291905050506103f0565b60405180826000191660001916815260200191505060405180910390f35b3480156101d857600080fd5b5061020c600480360381019080803563ffffffff191690602001909291908035600019169060200190929190505050610408565b005b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561026957600080fd5b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16ff5b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6001818154811015156102d757fe5b906000526020600020016000915054906101000a90046401000000000281565b8060001916600260008463ffffffff191663ffffffff191681526020019081526020016000205460001916141515610397576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260188152602001807f4861736865732073686f756c6420636f72726573706f6e64000000000000000081525060200191505060405180910390fd5b7f65c5dc4751562e974bfe71e30f4738e7824976b8edf849f6dacd9699e8bb9d0e8282604051808363ffffffff191663ffffffff1916815260200182600019166000191681526020019250505060405180910390a15050565b60026020528060005260406000206000915090505481565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561046357600080fd5b6000600102600260008463ffffffff191663ffffffff191681526020019081526020016000205460001916141515610529576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260268152602001807f41207472616e73616374696f6e2063616e206f6e6c792062652061756469746581526020017f64206f6e6365000000000000000000000000000000000000000000000000000081525060400191505060405180910390fd5b80600260008463ffffffff191663ffffffff1916815260200190815260200160002081600019169055507fdd1302982979fadb5454d575982f114bef9dccf8c49bcb66e3c9af8f0fefcc878282604051808363ffffffff191663ffffffff1916815260200182600019166000191681526020019250505060405180910390a150505600a165627a7a72305820114a3e2bde9c9bff2104e44d2037950a00c73e5629b200b606f36b39684cecc40029";
 
     protected static final HashMap<String, String> _addresses;
 
@@ -54,13 +55,14 @@ public class AuditTrail extends Contract {
     public List<AuditEventResponse> getAuditEvents(TransactionReceipt transactionReceipt) {
         final Event event = new Event("Audit", 
                 Arrays.<TypeReference<?>>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes28>() {}, new TypeReference<Bytes32>() {}));
         List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(event, transactionReceipt);
         ArrayList<AuditEventResponse> responses = new ArrayList<AuditEventResponse>(valueList.size());
         for (Contract.EventValuesWithLog eventValues : valueList) {
             AuditEventResponse typedResponse = new AuditEventResponse();
             typedResponse.log = eventValues.getLog();
-            typedResponse.auditData = (String) eventValues.getNonIndexedValues().get(0).getValue();
+            typedResponse.transactionIdentifier = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
+            typedResponse.transactionHash = (byte[]) eventValues.getNonIndexedValues().get(1).getValue();
             responses.add(typedResponse);
         }
         return responses;
@@ -69,7 +71,7 @@ public class AuditTrail extends Contract {
     public Observable<AuditEventResponse> auditEventObservable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
         final Event event = new Event("Audit", 
                 Arrays.<TypeReference<?>>asList(),
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes28>() {}, new TypeReference<Bytes32>() {}));
         EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
         filter.addSingleTopic(EventEncoder.encode(event));
         return web3j.ethLogObservable(filter).map(new Func1<Log, AuditEventResponse>() {
@@ -78,7 +80,43 @@ public class AuditTrail extends Contract {
                 Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(event, log);
                 AuditEventResponse typedResponse = new AuditEventResponse();
                 typedResponse.log = log;
-                typedResponse.auditData = (String) eventValues.getNonIndexedValues().get(0).getValue();
+                typedResponse.transactionIdentifier = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
+                typedResponse.transactionHash = (byte[]) eventValues.getNonIndexedValues().get(1).getValue();
+                return typedResponse;
+            }
+        });
+    }
+
+    public List<ValidateEventResponse> getValidateEvents(TransactionReceipt transactionReceipt) {
+        final Event event = new Event("Validate", 
+                Arrays.<TypeReference<?>>asList(),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes28>() {}, new TypeReference<Bytes32>() {}));
+        List<Contract.EventValuesWithLog> valueList = extractEventParametersWithLog(event, transactionReceipt);
+        ArrayList<ValidateEventResponse> responses = new ArrayList<ValidateEventResponse>(valueList.size());
+        for (Contract.EventValuesWithLog eventValues : valueList) {
+            ValidateEventResponse typedResponse = new ValidateEventResponse();
+            typedResponse.log = eventValues.getLog();
+            typedResponse.transactionIdentifier = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
+            typedResponse.transactionHash = (byte[]) eventValues.getNonIndexedValues().get(1).getValue();
+            responses.add(typedResponse);
+        }
+        return responses;
+    }
+
+    public Observable<ValidateEventResponse> validateEventObservable(DefaultBlockParameter startBlock, DefaultBlockParameter endBlock) {
+        final Event event = new Event("Validate", 
+                Arrays.<TypeReference<?>>asList(),
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes28>() {}, new TypeReference<Bytes32>() {}));
+        EthFilter filter = new EthFilter(startBlock, endBlock, getContractAddress());
+        filter.addSingleTopic(EventEncoder.encode(event));
+        return web3j.ethLogObservable(filter).map(new Func1<Log, ValidateEventResponse>() {
+            @Override
+            public ValidateEventResponse call(Log log) {
+                Contract.EventValuesWithLog eventValues = extractEventParametersWithLog(event, log);
+                ValidateEventResponse typedResponse = new ValidateEventResponse();
+                typedResponse.log = log;
+                typedResponse.transactionIdentifier = (byte[]) eventValues.getNonIndexedValues().get(0).getValue();
+                typedResponse.transactionHash = (byte[]) eventValues.getNonIndexedValues().get(1).getValue();
                 return typedResponse;
             }
         });
@@ -91,11 +129,18 @@ public class AuditTrail extends Contract {
         return executeRemoteCallSingleValueReturn(function, String.class);
     }
 
-    public RemoteCall<String> auditEntries(BigInteger param0) {
-        final Function function = new Function("auditEntries", 
+    public RemoteCall<byte[]> auditedTransactions(BigInteger param0) {
+        final Function function = new Function("auditedTransactions", 
                 Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Uint256(param0)), 
-                Arrays.<TypeReference<?>>asList(new TypeReference<Utf8String>() {}));
-        return executeRemoteCallSingleValueReturn(function, String.class);
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes28>() {}));
+        return executeRemoteCallSingleValueReturn(function, byte[].class);
+    }
+
+    public RemoteCall<byte[]> transactionHashes(byte[] param0) {
+        final Function function = new Function("transactionHashes", 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes28(param0)), 
+                Arrays.<TypeReference<?>>asList(new TypeReference<Bytes32>() {}));
+        return executeRemoteCallSingleValueReturn(function, byte[].class);
     }
 
     public static RemoteCall<AuditTrail> deploy(Web3j web3j, Credentials credentials, BigInteger gasPrice, BigInteger gasLimit) {
@@ -114,10 +159,20 @@ public class AuditTrail extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteCall<TransactionReceipt> audit(String auditData) {
+    public RemoteCall<TransactionReceipt> audit(byte[] transactionIdentifier, byte[] transactionHash) {
         final Function function = new Function(
                 "audit", 
-                Arrays.<Type>asList(new org.web3j.abi.datatypes.Utf8String(auditData)), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes28(transactionIdentifier), 
+                new org.web3j.abi.datatypes.generated.Bytes32(transactionHash)), 
+                Collections.<TypeReference<?>>emptyList());
+        return executeRemoteCallTransaction(function);
+    }
+
+    public RemoteCall<TransactionReceipt> validate(byte[] transactionIdentifier, byte[] transactionHash) {
+        final Function function = new Function(
+                "validate", 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.generated.Bytes28(transactionIdentifier), 
+                new org.web3j.abi.datatypes.generated.Bytes32(transactionHash)), 
                 Collections.<TypeReference<?>>emptyList());
         return executeRemoteCallTransaction(function);
     }
@@ -141,6 +196,16 @@ public class AuditTrail extends Contract {
     public static class AuditEventResponse {
         public Log log;
 
-        public String auditData;
+        public byte[] transactionIdentifier;
+
+        public byte[] transactionHash;
+    }
+
+    public static class ValidateEventResponse {
+        public Log log;
+
+        public byte[] transactionIdentifier;
+
+        public byte[] transactionHash;
     }
 }

@@ -1,27 +1,79 @@
 package org.incode.eurocommercial.contactapp.dom.audit;
 
-import java.util.List;
+import java.nio.ByteBuffer;
+import java.sql.Timestamp;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
+import javax.inject.Inject;
+import javax.jdo.annotations.Column;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.annotations.Expose;
+
+import org.apache.commons.codec.digest.DigestUtils;
+
+import org.apache.isis.applib.annotation.CollectionLayout;
+import org.apache.isis.applib.annotation.DomainObject;
+import org.apache.isis.applib.annotation.Editing;
+import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.PropertyLayout;
+import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.HasTransactionId;
 import org.apache.isis.applib.services.HasUsername;
+import org.apache.isis.applib.services.repository.RepositoryService;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class AuditEntry implements HasTransactionId, HasUsername {
+@PersistenceCapable(
+        identityType= IdentityType.DATASTORE
+)
+@DomainObject(
+        editing = Editing.DISABLED
+)
+public class AuditEntry implements HasTransactionId, HasUsername, Comparable<AuditEntry> {
+
+    @Programmatic
     public static AuditEntry deserialise(String representation) {
-        return new Gson().fromJson(representation, AuditEntry.class);
+        return new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation().create()
+                .fromJson(representation, AuditEntry.class);
     }
 
+    @Programmatic
     public String serialise() {
-        return new Gson().toJson(this);
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation().create();
+        JsonElement jsonElement = gson.toJsonTree(this);
+        jsonElement.getAsJsonObject().addProperty("timestamp", timestamp.getTime());
+        return gson.toJson(jsonElement);
     }
 
+    @Programmatic
+    public byte[] getHash() {
+        return DigestUtils.sha256(serialise());
+    }
+
+    @Programmatic
+    public byte[] getIdentifier() {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(28);
+        byteBuffer.putLong(transactionId.getMostSignificantBits());
+        byteBuffer.putLong(transactionId.getLeastSignificantBits());
+        byteBuffer.putInt(sequence);
+        byteBuffer.putLong(timestamp.getTime());
+        return byteBuffer.array();
+    }
+
+    @Expose
+    @Column(allowsNull = "false")
     @Getter @Setter
     private String user;
 
@@ -30,53 +82,91 @@ public class AuditEntry implements HasTransactionId, HasUsername {
         return user;
     }
 
+    @Column(allowsNull = "false")
     @Getter @Setter
-    private long timestamp;
+    private Timestamp timestamp;
 
+    @Expose
+    @Column(allowsNull = "false")
     @Getter @Setter
     private UUID transactionId;
 
+    @Expose
+    @Column(allowsNull = "false")
     @Getter @Setter
     private int sequence;
 
-    @Getter
-    private List<ChangedObject> changedObjects = Lists.newArrayList();;
+    @Column(allowsNull = "true")
+    @Getter @Setter
+    private String ethTransactionHash;
 
-    public static class ChangedObject {
+    @Persistent(mappedBy = "auditEntry", dependentElement = "true")
+    @CollectionLayout(defaultView = "table")
+    @Getter @Setter
+    private SortedSet<ChangedProperty> changedProperties = new TreeSet<>();
+
+    @Programmatic
+    public void addChange(String target, String property, String preValue, String postValue) {
+        ChangedProperty changedProperty = repositoryService.instantiate(ChangedProperty.class);
+        changedProperty.setAuditEntry(this);
+        changedProperty.setTarget(target);
+        changedProperty.setProperty(property);
+        changedProperty.setPreValue(preValue);
+        changedProperty.setPostValue(postValue);
+        repositoryService.persist(changedProperty);
+        changedProperties.add(changedProperty);
+    }
+
+    @Override
+    public int compareTo(final AuditEntry other) {
+        return Comparator.comparing(AuditEntry::getUser)
+                .thenComparing(AuditEntry::getTimestamp)
+                .thenComparing(AuditEntry::getTransactionId)
+                .thenComparing(AuditEntry::getSequence)
+                .compare(this, other);
+    }
+
+    @PersistenceCapable(
+            identityType= IdentityType.DATASTORE
+    )
+    @DomainObject(
+            editing = Editing.DISABLED
+    )
+    public static class ChangedProperty implements Comparable<ChangedProperty> {
+
+        @Column(allowsNull = "false")
+        @PropertyLayout(hidden = Where.REFERENCES_PARENT)
+        @Getter @Setter
+        private AuditEntry auditEntry;
+
+        @Expose
+        @Column(allowsNull = "false")
         @Getter @Setter
         private String target;
 
-        @Getter
-        private List<ChangedProperty> changedProperties = Lists.newArrayList();
+        @Expose
+        @Column(allowsNull = "false")
+        @Getter @Setter
+        private String property;
 
-        public static class ChangedProperty {
-            @Getter @Setter
-            private String property;
+        @Expose
+        @Column(allowsNull = "true")
+        @Getter @Setter
+        private String preValue;
 
-            @Getter @Setter
-            private String preValue;
+        @Expose
+        @Column(allowsNull = "true")
+        @Getter @Setter
+        private String postValue;
 
-            @Getter @Setter
-            private String postValue;
+        @Override
+        public int compareTo(final ChangedProperty other) {
+            return Comparator.comparing(ChangedProperty::getAuditEntry)
+                    .thenComparing(ChangedProperty::getTarget)
+                    .thenComparing(ChangedProperty::getProperty)
+                    .compare(this, other);
         }
     }
 
-    public void addChange(String target, String property, String preValue, String postValue) {
-        ChangedObject changedObject = Iterables.getLast(changedObjects, null);
-        if (changedObject == null || !changedObject.target.equals(target)) {
-            changedObject = new ChangedObject();
-            changedObject.target = target;
-            changedObjects.add(changedObject);
-        }
-        ChangedObject.ChangedProperty changedProperty = new ChangedObject.ChangedProperty();
-        changedProperty.property = property;
-        changedProperty.preValue = preValue;
-        changedProperty.postValue = postValue;
-        changedObject.changedProperties.add(changedProperty);
-    }
-
-//    @Override
-//    public String toString() {
-//        return ObjectContracts.toString(this, "timestamp,user,targetStr,memberIdentifier");
-//    }
+    @Inject RepositoryService repositoryService;
 }
