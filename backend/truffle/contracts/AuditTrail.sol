@@ -2,7 +2,11 @@ pragma solidity 0.4.23;
 
 contract AuditTrail {
     address public owner;
+
     bytes28[] public auditedTransactions;
+    function getAuditedTransactionsCount() public view returns(uint256) {
+        return auditedTransactions.length;
+    }
 
     mapping(bytes28 => bytes32) public transactionHashes;
 

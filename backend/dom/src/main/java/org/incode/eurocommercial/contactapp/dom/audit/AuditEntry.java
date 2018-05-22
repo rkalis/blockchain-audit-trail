@@ -12,6 +12,8 @@ import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.Queries;
+import javax.jdo.annotations.Query;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -39,6 +41,14 @@ import lombok.Setter;
 
 @PersistenceCapable(
         identityType= IdentityType.DATASTORE
+)
+@Queries(
+        @Query(
+                name="findByTransactionId", language="JDOQL",
+                value="SELECT "
+                        + "FROM org.incode.eurocommercial.contactapp.dom.audit.AuditEntry "
+                        + "WHERE transactionId == :transactionId "
+                        + "&& sequence == :sequence")
 )
 @DomainObject(
         editing = Editing.DISABLED

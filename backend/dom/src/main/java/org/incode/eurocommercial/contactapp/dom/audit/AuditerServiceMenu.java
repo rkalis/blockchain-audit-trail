@@ -28,6 +28,15 @@ public class AuditerServiceMenu {
         return auditerServiceRepository.allAuditEntries();
     }
 
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(
+            bookmarking = BookmarkPolicy.AS_ROOT,
+            named = "Validate Audit Trail"
+    )
+    public ValidationReport doValidateAuditTrail() throws Exception {
+        return auditerServiceRepository.validateAuditTrail();
+    }
+
     @Inject private AuditerServiceRepository auditerServiceRepository;
 }
 
