@@ -19,7 +19,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.annotations.Expose;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.joda.time.LocalDateTime;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
+import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.CollectionLayout;
 import org.apache.isis.applib.annotation.DomainObject;
 import org.apache.isis.applib.annotation.Editing;
@@ -28,6 +31,7 @@ import org.apache.isis.applib.annotation.PropertyLayout;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.HasTransactionId;
 import org.apache.isis.applib.services.HasUsername;
+import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.repository.RepositoryService;
 
 import lombok.Getter;
@@ -100,10 +104,27 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
     @Getter @Setter
     private String ethTransactionHash;
 
+    @Column(allowsNull = "true")
+    @Getter @Setter
+    private ValidationResult validationResult;
+
+    @Persistent
+    @Column(allowsNull = "true")
+    @Getter @Setter
+    private LocalDateTime lastValidatedAt;
+
     @Persistent(mappedBy = "auditEntry", dependentElement = "true")
     @CollectionLayout(defaultView = "table")
     @Getter @Setter
     private SortedSet<ChangedProperty> changedProperties = new TreeSet<>();
+
+    @Action
+    public AuditEntry validate() throws Exception {
+        TransactionReceipt receipt = web3Service.getAuditTrailContract().validate(getIdentifier(), getHash()).send();
+        validationResult = receipt.getStatus().equals("0x0") ? ValidationResult.INVALIDATED : ValidationResult.VALIDATED;
+        lastValidatedAt = clockService.nowAsLocalDateTime();
+        return this;
+    }
 
     @Programmatic
     public void addChange(String target, String property, String preValue, String postValue) {
@@ -168,5 +189,12 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
         }
     }
 
+    public static enum ValidationResult {
+        VALIDATED,
+        INVALIDATED
+    }
+
     @Inject RepositoryService repositoryService;
+    @Inject Web3Service web3Service;
+    @Inject ClockService clockService;
 }
