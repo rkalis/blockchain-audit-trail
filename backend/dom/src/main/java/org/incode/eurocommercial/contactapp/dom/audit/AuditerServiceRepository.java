@@ -63,10 +63,12 @@ public class AuditerServiceRepository {
              i.compareTo(auditedTransactionCount) < 0;
              i = i.add(BigInteger.ONE)) {
             byte[] identifier = auditTrail.auditedTransactions(i).send();
+
             ByteBuffer byteBuffer = ByteBuffer.wrap(identifier);
             UUID transactionId = new UUID(byteBuffer.getLong(), byteBuffer.getLong());
             int sequence = byteBuffer.getInt();
             Timestamp timestamp = new Timestamp(byteBuffer.getLong());
+
             AuditEntry foundEntry = findByTransactionIdAndSequence(transactionId, sequence);
             if (foundEntry == null) {
                 String dataHash = Hex.encodeHexString(auditTrail.transactionHashes(identifier).send());
@@ -81,4 +83,3 @@ public class AuditerServiceRepository {
     @Inject private RepositoryService repositoryService;
     @Inject private Web3Service web3Service;
 }
-

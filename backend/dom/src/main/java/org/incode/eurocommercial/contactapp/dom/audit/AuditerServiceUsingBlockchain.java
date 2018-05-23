@@ -1,6 +1,8 @@
 package org.incode.eurocommercial.contactapp.dom.audit;
 
+import java.sql.Timestamp;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -11,17 +13,20 @@ import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.audit.AuditerService;
 import org.apache.isis.applib.services.bookmark.Bookmark;
+import org.apache.isis.applib.services.bookmark.BookmarkService2;
 import org.apache.isis.applib.services.iactn.Interaction;
 import org.apache.isis.applib.services.publish.PublishedObjects;
 import org.apache.isis.applib.services.publish.PublisherService;
 import org.apache.isis.applib.services.repository.RepositoryService;
+import org.apache.isis.core.runtime.authentication.standard.SimpleSession;
+import org.apache.isis.core.runtime.sessiontemplate.AbstractIsisSessionTemplate;
 
 @DomainService(
         nature = NatureOfService.DOMAIN
 )
 public class AuditerServiceUsingBlockchain implements AuditerService, PublisherService {
 
-    AuditEntry auditEntry;
+    final ThreadLocal<AuditEntry> currentAuditEntry = new ThreadLocal<>();
 
     @Override
     public boolean isEnabled() {
@@ -39,31 +44,21 @@ public class AuditerServiceUsingBlockchain implements AuditerService, PublisherS
             final String preValue,
             final String postValue,
             final String user,
-            final java.sql.Timestamp timestamp
+            final Timestamp timestamp
     ) {
+        AuditEntry auditEntry = currentAuditEntry.get();
         if (auditEntry == null) {
             auditEntry = createAuditEntry(timestamp, user, transactionId, sequence);
             auditEntry.addChange(target.toString(), propertyId, preValue, postValue);
+            currentAuditEntry.set(auditEntry);
         } else if (isCurrentlyBeingAudited(transactionId, sequence)) {
             auditEntry.addChange(target.toString(), propertyId, preValue, postValue);
         } else {
             commitAuditEntry();
             auditEntry = createAuditEntry(timestamp, user, transactionId, sequence);
             auditEntry.addChange(target.toString(), propertyId, preValue, postValue);
+            currentAuditEntry.set(auditEntry);
         }
-
-//        System.out.println("Well Auditer works!");
-//        try {
-//            web3Service.getTransactionManager().setNonce(web3Service.getWeb3j().ethGetTransactionCount(web3Service.getCredentials().getAddress(), DefaultBlockParameterName.PENDING).send().getTransactionCount());
-//            web3Service.getAuditTrailContract().audit(
-////                    Strings.nullToEmpty(preValue),
-//                    Strings.nullToEmpty(postValue)
-//            ).sendAsync()
-//                    .thenAccept(System.out::println)
-//                    .exceptionally(e -> { e.printStackTrace(); return null;});
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Programmatic
@@ -78,44 +73,34 @@ public class AuditerServiceUsingBlockchain implements AuditerService, PublisherS
         auditEntry.setUser(user);
         auditEntry.setTransactionId(transactionId);
         auditEntry.setSequence(sequence);
-        repositoryService.persist(auditEntry);
+        repositoryService.persistAndFlush(auditEntry);
 
         return auditEntry;
     }
 
     @Programmatic
     public boolean isCurrentlyBeingAudited(UUID transactionId, int sequence) {
-        return auditEntry.getTransactionId().equals(transactionId) && auditEntry.getSequence() == sequence;
+        return currentAuditEntry.get().getTransactionId().equals(transactionId) && currentAuditEntry.get().getSequence() == sequence;
     }
 
     @Programmatic
     public void commitAuditEntry() {
+        AuditEntry auditEntry = currentAuditEntry.get();
         if (auditEntry == null) {
             return;
         }
 
         try {
-//            CompletableFuture.supplyAsync(auditEntry)
-//                    .thenAcceptBoth(
-//                            web3Service.getAuditTrailContract()
-//                                    .audit(currentAuditEntry.getIdentifier(), currentAuditEntry.getHash())
-//                                    .sendAsync(),
-//                            (entry, transactionReceipt) -> entry.setEthTransactionHash(transactionReceipt.getTransactionHash())
-//                    );
-//
-////                    .thenCombine(CompletableFuture.supplyAsync(() -> currentAuditEntry), (receipt, entry) -> {entry.setEthTransactionHash(receipt.getTransactionHash()); return null;});
-////                    .thenAccept(receipt -> currentAuditEntry.setEthTransactionHash(receipt.getTransactionHash()))
-////                    .exceptionally(e -> {currentAuditEntry.setEthTransactionHash("FAILED"); return null;})
-////                    .thenRun(() -> System.out.println(currentAuditEntry.serialise()));
-            TransactionReceipt receipt = web3Service.getAuditTrailContract()
+            final Bookmark bookmark = bookmarkService2.bookmarkFor(auditEntry);
+            web3Service.getAuditTrailContract()
                     .audit(auditEntry.getIdentifier(), auditEntry.getHash())
-                    .send();
-            auditEntry.setEthTransactionHash(receipt.getTransactionHash());
-            System.out.println(receipt);
+                    .sendAsync()
+                    .thenAccept(new TransactionReceiptConsumer(bookmark))
+                    .thenRun(() -> System.out.println(currentAuditEntry.get().serialise()));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        auditEntry = null;
+        currentAuditEntry.set(null);
     }
 
     @Override public void publish(final Interaction.Execution<?, ?> execution) {
@@ -128,4 +113,28 @@ public class AuditerServiceUsingBlockchain implements AuditerService, PublisherS
 
     @Inject private Web3Service web3Service;
     @Inject private RepositoryService repositoryService;
+    @Inject BookmarkService2 bookmarkService2;
+
+    private static class TransactionReceiptConsumer extends AbstractIsisSessionTemplate implements Consumer<TransactionReceipt> {
+        private Bookmark bookmark;
+
+        public TransactionReceiptConsumer(final Bookmark bookmark) {
+            this.bookmark = bookmark;
+        }
+        public TransactionReceiptConsumer() {}
+
+        @Override
+        public void accept(final TransactionReceipt receipt) {
+            execute(new SimpleSession("sven", new String[]{}), receipt);
+            System.out.println(receipt);
+        }
+
+        @Override protected void doExecuteWithTransaction(final Object context) {
+            TransactionReceipt receipt = (TransactionReceipt) context;
+            AuditEntry auditEntry = bookmarkService2.lookup(bookmark, AuditEntry.class);
+            auditEntry.setEthTransactionHash(receipt.getTransactionHash());
+        }
+
+        @Inject BookmarkService2 bookmarkService2;
+    }
 }

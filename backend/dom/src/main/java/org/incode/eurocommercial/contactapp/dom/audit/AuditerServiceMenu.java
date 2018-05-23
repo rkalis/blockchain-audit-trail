@@ -39,4 +39,3 @@ public class AuditerServiceMenu {
 
     @Inject private AuditerServiceRepository auditerServiceRepository;
 }
-
