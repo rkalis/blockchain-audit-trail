@@ -10,6 +10,8 @@ import javax.inject.Inject;
 
 import com.google.common.collect.Lists;
 
+import org.apache.commons.codec.binary.Hex;
+
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -45,7 +47,7 @@ public class AuditerServiceRepository {
         AuditTrail auditTrail = web3Service.getAuditTrailContract();
         List<AuditEntry> validatedAuditEntries = Lists.newArrayList();
         List<AuditEntry> invalidatedAuditEntries = Lists.newArrayList();
-        List<AuditEntry> missingAuditEntries = Lists.newArrayList();
+        List<MissingAuditEntryViewModel> missingAuditEntries = Lists.newArrayList();
 
         for (AuditEntry entry : allAuditEntries()) {
             entry.validate();
@@ -67,11 +69,9 @@ public class AuditerServiceRepository {
             Timestamp timestamp = new Timestamp(byteBuffer.getLong());
             AuditEntry foundEntry = findByTransactionIdAndSequence(transactionId, sequence);
             if (foundEntry == null) {
-                foundEntry = new AuditEntry();
-                foundEntry.setTransactionId(transactionId);
-                foundEntry.setSequence(sequence);
-                foundEntry.setTimestamp(timestamp);
-                missingAuditEntries.add(foundEntry);
+                String dataHash = Hex.encodeHexString(auditTrail.transactionHashes(identifier).send());
+                MissingAuditEntryViewModel missingEntry = new MissingAuditEntryViewModel(timestamp, transactionId, sequence, dataHash);
+                missingAuditEntries.add(missingEntry);
             }
         }
 

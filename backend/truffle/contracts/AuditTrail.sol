@@ -29,12 +29,17 @@ contract AuditTrail {
     function audit(bytes28 transactionIdentifier, bytes32 transactionHash) external ownerOnly {
         require(transactionHashes[transactionIdentifier] == 0, "A transaction can only be audited once");
         transactionHashes[transactionIdentifier] = transactionHash;
+        auditedTransactions.push(transactionIdentifier);
         emit Audit(transactionIdentifier, transactionHash);
     }
 
-    function validate(bytes28 transactionIdentifier, bytes32 transactionHash) external {
-        require(transactionHashes[transactionIdentifier] == transactionHash, "Hashes should correspond");
-        emit Validate(transactionIdentifier, transactionHash);
+    function validate(bytes28 transactionIdentifier, bytes32 transactionHash) external view returns(uint8) {
+        if (transactionHashes[transactionIdentifier] == transactionHash) {
+            return 0;
+        } else {
+            return 1;
+        }
+        // emit Validate(transactionIdentifier, transactionHash);
     }
 }
 

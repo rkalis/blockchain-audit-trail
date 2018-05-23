@@ -1,5 +1,6 @@
 package org.incode.eurocommercial.contactapp.dom.audit;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.Comparator;
@@ -14,6 +15,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.Queries;
 import javax.jdo.annotations.Query;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,7 +25,6 @@ import com.google.gson.annotations.Expose;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.LocalDateTime;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.CollectionLayout;
@@ -35,6 +37,8 @@ import org.apache.isis.applib.services.HasTransactionId;
 import org.apache.isis.applib.services.HasUsername;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.repository.RepositoryService;
+import org.apache.isis.schema.utils.jaxbadapters.JodaLocalDateTimeStringAdapter;
+import org.apache.isis.schema.utils.jaxbadapters.PersistentEntityAdapter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,7 +48,7 @@ import lombok.Setter;
 )
 @Queries(
         @Query(
-                name="findByTransactionId", language="JDOQL",
+                name="findByTransactionIdAndSequence", language="JDOQL",
                 value="SELECT "
                         + "FROM org.incode.eurocommercial.contactapp.dom.audit.AuditEntry "
                         + "WHERE transactionId == :transactionId "
@@ -53,7 +57,12 @@ import lombok.Setter;
 @DomainObject(
         editing = Editing.DISABLED
 )
+@XmlJavaTypeAdapter(PersistentEntityAdapter.class)
 public class AuditEntry implements HasTransactionId, HasUsername, Comparable<AuditEntry> {
+
+    public String title() {
+        return user + "> " + transactionId + " [" + sequence + "]";
+    }
 
     @Programmatic
     public static AuditEntry deserialise(String representation) {
@@ -119,6 +128,7 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
     private ValidationResult validationResult;
 
     @Persistent
+    @XmlJavaTypeAdapter(JodaLocalDateTimeStringAdapter.ForJaxb.class)
     @Column(allowsNull = "true")
     @Getter @Setter
     private LocalDateTime lastValidatedAt;
@@ -130,8 +140,8 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
 
     @Action
     public AuditEntry validate() throws Exception {
-        TransactionReceipt receipt = web3Service.getAuditTrailContract().validate(getIdentifier(), getHash()).send();
-        validationResult = receipt.getStatus().equals("0x0") ? ValidationResult.INVALIDATED : ValidationResult.VALIDATED;
+        BigInteger validationStatus = web3Service.getAuditTrailContract().validate(getIdentifier(), getHash()).send();
+        validationResult = validationStatus.equals(BigInteger.ZERO) ? ValidationResult.VALIDATED : ValidationResult.INVALIDATED;
         lastValidatedAt = clockService.nowAsLocalDateTime();
         return this;
     }
@@ -166,6 +176,7 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
     public static class ChangedProperty implements Comparable<ChangedProperty> {
 
         @Column(allowsNull = "false")
+        @XmlTransient
         @PropertyLayout(hidden = Where.REFERENCES_PARENT)
         @Getter @Setter
         private AuditEntry auditEntry;
