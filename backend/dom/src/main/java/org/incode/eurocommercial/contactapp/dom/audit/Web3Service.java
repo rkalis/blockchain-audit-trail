@@ -97,12 +97,7 @@ public class Web3Service {
     @Programmatic
     public void deployAuditTrail() {
         try {
-            auditTrailContract = AuditTrail.deploy(
-                    getWeb3j(),
-                    getCredentials(),
-                    getGasPrice(),
-                    getGasLimit()
-            ).send();
+            auditTrailContract = AuditTrail.deploy(web3j, credentials, gasPrice, gasLimit).send();
         } catch (Exception e) {
             e.printStackTrace();
             auditTrailContract = null;

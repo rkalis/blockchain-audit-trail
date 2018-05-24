@@ -26,6 +26,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ValidationReport {
+    public String title() {
+        return "Validation Report";
+    }
+
     @XmlElementWrapper
     @CollectionLayout(defaultView = "table")
     @Getter

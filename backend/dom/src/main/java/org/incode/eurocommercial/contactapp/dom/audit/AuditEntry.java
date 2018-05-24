@@ -15,6 +15,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.Queries;
 import javax.jdo.annotations.Query;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.gson.Gson;
@@ -92,12 +93,18 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
         return byteBuffer.array();
     }
 
+    @XmlTransient
+    public String getDataHash() {
+        return org.bouncycastle.util.encoders.Hex.toHexString(getHash());
+    }
+
     @Expose
     @Column(allowsNull = "false")
     @Getter @Setter
     private String user;
 
     @Override
+    @Programmatic
     public String getUsername() {
         return user;
     }

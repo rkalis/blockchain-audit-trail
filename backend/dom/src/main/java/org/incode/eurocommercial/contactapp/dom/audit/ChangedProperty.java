@@ -40,6 +40,9 @@ import lombok.Setter;
         editing = Editing.DISABLED
 )
 public class ChangedProperty implements Comparable<ChangedProperty> {
+    public String title() {
+        return target + " " + property;
+    }
 
     @Column(allowsNull = "false")
     @XmlTransient
