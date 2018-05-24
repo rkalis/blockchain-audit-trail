@@ -43,6 +43,16 @@ public class AuditerServiceRepository {
     }
 
     @Programmatic
+    public List<AuditEntry> findByChangedObject(
+            String target
+    ) {
+        return repositoryService.allMatches(
+                new QueryDefault<>(AuditEntry.class,
+                        "findByChangedObject",
+                        "target", target));
+    }
+
+    @Programmatic
     public ValidationReport validateAuditTrail() throws Exception {
         AuditTrail auditTrail = web3Service.getAuditTrailContract();
         List<AuditEntry> validatedAuditEntries = Lists.newArrayList();

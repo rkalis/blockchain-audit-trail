@@ -96,6 +96,7 @@ public class AuditerServiceUsingBlockchain implements AuditerService, PublisherS
                     .audit(auditEntry.getIdentifier(), auditEntry.getHash())
                     .sendAsync()
                     .thenAccept(new TransactionReceiptConsumer(bookmark))
+                    .exceptionally(e -> {e.printStackTrace(); return null;})
                     .thenRun(() -> System.out.println(currentAuditEntry.get().serialise()));
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,7 +114,7 @@ public class AuditerServiceUsingBlockchain implements AuditerService, PublisherS
 
     @Inject private Web3Service web3Service;
     @Inject private RepositoryService repositoryService;
-    @Inject BookmarkService2 bookmarkService2;
+    @Inject private BookmarkService2 bookmarkService2;
 
     private static class TransactionReceiptConsumer extends AbstractIsisSessionTemplate implements Consumer<TransactionReceipt> {
         private Bookmark bookmark;
@@ -135,6 +136,6 @@ public class AuditerServiceUsingBlockchain implements AuditerService, PublisherS
             auditEntry.setEthTransactionHash(receipt.getTransactionHash());
         }
 
-        @Inject BookmarkService2 bookmarkService2;
+        @Inject private BookmarkService2 bookmarkService2;
     }
 }

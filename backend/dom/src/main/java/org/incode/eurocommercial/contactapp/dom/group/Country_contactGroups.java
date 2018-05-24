@@ -49,5 +49,4 @@ public class Country_contactGroups {
 
     @Inject
     ContactGroupRepository contactGroupRepository;
-
 }

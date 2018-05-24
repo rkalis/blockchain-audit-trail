@@ -15,7 +15,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.Queries;
 import javax.jdo.annotations.Query;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.google.gson.Gson;
@@ -31,8 +30,6 @@ import org.apache.isis.applib.annotation.CollectionLayout;
 import org.apache.isis.applib.annotation.DomainObject;
 import org.apache.isis.applib.annotation.Editing;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.annotation.PropertyLayout;
-import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.HasTransactionId;
 import org.apache.isis.applib.services.HasUsername;
 import org.apache.isis.applib.services.clock.ClockService;
@@ -44,16 +41,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 @PersistenceCapable(
-        identityType= IdentityType.DATASTORE
+        identityType = IdentityType.DATASTORE
 )
-@Queries(
+@Queries({
         @Query(
-                name="findByTransactionIdAndSequence", language="JDOQL",
-                value="SELECT "
+                name = "findByTransactionIdAndSequence", language = "JDOQL",
+                value = "SELECT "
                         + "FROM org.incode.eurocommercial.contactapp.dom.audit.AuditEntry "
                         + "WHERE transactionId == :transactionId "
-                        + "&& sequence == :sequence")
-)
+                        + "&& sequence == :sequence"),
+        @Query(
+                name = "findByChangedObject", language = "JDOQL",
+                value = "SELECT "
+                        + "FROM org.incode.eurocommercial.contactapp.dom.audit.AuditEntry "
+                        + "WHERE this.changedProperties.contains(prop) && prop.target == :target "
+                        + "VARIABLES org.incode.eurocommercial.contactapp.dom.audit.ChangedProperty prop"
+        )
+})
 @DomainObject(
         editing = Editing.DISABLED
 )
@@ -62,13 +66,6 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
 
     public String title() {
         return user + "> " + transactionId + " [" + sequence + "]";
-    }
-
-    @Programmatic
-    public static AuditEntry deserialise(String representation) {
-        return new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation().create()
-                .fromJson(representation, AuditEntry.class);
     }
 
     @Programmatic
@@ -167,55 +164,12 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
                 .compare(this, other);
     }
 
-    @PersistenceCapable(
-            identityType= IdentityType.DATASTORE
-    )
-    @DomainObject(
-            editing = Editing.DISABLED
-    )
-    public static class ChangedProperty implements Comparable<ChangedProperty> {
-
-        @Column(allowsNull = "false")
-        @XmlTransient
-        @PropertyLayout(hidden = Where.REFERENCES_PARENT)
-        @Getter @Setter
-        private AuditEntry auditEntry;
-
-        @Expose
-        @Column(allowsNull = "false")
-        @Getter @Setter
-        private String target;
-
-        @Expose
-        @Column(allowsNull = "false")
-        @Getter @Setter
-        private String property;
-
-        @Expose
-        @Column(allowsNull = "true")
-        @Getter @Setter
-        private String preValue;
-
-        @Expose
-        @Column(allowsNull = "true")
-        @Getter @Setter
-        private String postValue;
-
-        @Override
-        public int compareTo(final ChangedProperty other) {
-            return Comparator.comparing(ChangedProperty::getAuditEntry)
-                    .thenComparing(ChangedProperty::getTarget)
-                    .thenComparing(ChangedProperty::getProperty)
-                    .compare(this, other);
-        }
-    }
-
-    public static enum ValidationResult {
+    public enum ValidationResult {
         VALIDATED,
         INVALIDATED
     }
 
-    @Inject RepositoryService repositoryService;
-    @Inject Web3Service web3Service;
-    @Inject ClockService clockService;
+    @Inject private RepositoryService repositoryService;
+    @Inject private Web3Service web3Service;
+    @Inject private ClockService clockService;
 }

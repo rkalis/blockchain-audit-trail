@@ -29,6 +29,12 @@ public class AuditerServiceMenu {
     }
 
     @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
+    public List<AuditEntry> findByChangedObject(final String target) {
+        return auditerServiceRepository.findByChangedObject(target);
+    }
+
+    @Action(semantics = SemanticsOf.SAFE)
     @ActionLayout(
             bookmarking = BookmarkPolicy.AS_ROOT,
             named = "Validate Audit Trail"
