@@ -61,12 +61,12 @@ public class ChangedProperty implements Comparable<ChangedProperty> {
     private String property;
 
     @Expose
-    @Column(allowsNull = "true")
+    @Column(allowsNull = "true", jdbcType = "CLOB")
     @Getter @Setter
     private String preValue;
 
     @Expose
-    @Column(allowsNull = "true")
+    @Column(allowsNull = "true", jdbcType = "CLOB")
     @Getter @Setter
     private String postValue;
 
