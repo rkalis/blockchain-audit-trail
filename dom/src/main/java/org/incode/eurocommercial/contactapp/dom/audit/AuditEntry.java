@@ -47,6 +47,7 @@ import org.apache.isis.applib.annotation.CollectionLayout;
 import org.apache.isis.applib.annotation.DomainObject;
 import org.apache.isis.applib.annotation.Editing;
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.annotation.Publishing;
 import org.apache.isis.applib.services.HasTransactionId;
 import org.apache.isis.applib.services.HasUsername;
 import org.apache.isis.applib.services.clock.ClockService;
@@ -76,7 +77,8 @@ import lombok.Setter;
         )
 })
 @DomainObject(
-        editing = Editing.DISABLED
+        editing = Editing.DISABLED,
+        publishing = Publishing.DISABLED
 )
 @XmlJavaTypeAdapter(PersistentEntityAdapter.class)
 public class AuditEntry implements HasTransactionId, HasUsername, Comparable<AuditEntry> {
@@ -159,10 +161,15 @@ public class AuditEntry implements HasTransactionId, HasUsername, Comparable<Aud
     private SortedSet<ChangedProperty> changedProperties = new TreeSet<>();
 
     @Action
-    public AuditEntry validate() throws Exception {
-        BigInteger validationStatus = web3Service.getAuditTrailContract().validate(getIdentifier(), getHash()).send();
-        validationResult = validationStatus.equals(BigInteger.ZERO) ? ValidationResult.VALIDATED : ValidationResult.INVALIDATED;
-        lastValidatedAt = clockService.nowAsLocalDateTime();
+    public AuditEntry validate() {
+        try {
+            BigInteger validationStatus = web3Service.getAuditTrailContract().validate(getIdentifier(), getHash()).send();
+            validationResult = validationStatus.equals(BigInteger.ZERO) ? ValidationResult.VALIDATED : ValidationResult.INVALIDATED;
+            lastValidatedAt = clockService.nowAsLocalDateTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return this;
     }
 

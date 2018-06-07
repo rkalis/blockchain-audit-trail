@@ -28,6 +28,7 @@ import com.google.gson.annotations.Expose;
 import org.apache.isis.applib.annotation.DomainObject;
 import org.apache.isis.applib.annotation.Editing;
 import org.apache.isis.applib.annotation.PropertyLayout;
+import org.apache.isis.applib.annotation.Publishing;
 import org.apache.isis.applib.annotation.Where;
 
 import lombok.Getter;
@@ -37,7 +38,8 @@ import lombok.Setter;
         identityType= IdentityType.DATASTORE
 )
 @DomainObject(
-        editing = Editing.DISABLED
+        editing = Editing.DISABLED,
+        publishing = Publishing.DISABLED
 )
 public class ChangedProperty implements Comparable<ChangedProperty> {
     public String title() {

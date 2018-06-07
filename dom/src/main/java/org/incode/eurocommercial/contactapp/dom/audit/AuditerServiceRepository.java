@@ -69,7 +69,7 @@ public class AuditerServiceRepository {
     }
 
     @Programmatic
-    public ValidationReport validateAuditTrail() throws Exception {
+    public ValidationReport validateAuditTrail() {
         AuditTrail auditTrail = web3Service.getAuditTrailContract();
         List<AuditEntry> validatedAuditEntries = Lists.newArrayList();
         List<AuditEntry> invalidatedAuditEntries = Lists.newArrayList();
@@ -84,23 +84,27 @@ public class AuditerServiceRepository {
             }
         }
 
-        BigInteger auditedTransactionCount = auditTrail.getAuditedTransactionsCount().send();
-        for (BigInteger i = BigInteger.ZERO;
-             i.compareTo(auditedTransactionCount) < 0;
-             i = i.add(BigInteger.ONE)) {
-            byte[] identifier = auditTrail.auditedTransactions(i).send();
+        try {
+            BigInteger auditedTransactionCount = auditTrail.getAuditedTransactionsCount().send();
+            for (BigInteger i = BigInteger.ZERO;
+                 i.compareTo(auditedTransactionCount) < 0;
+                 i = i.add(BigInteger.ONE)) {
+                byte[] identifier = auditTrail.auditedTransactions(i).send();
 
-            ByteBuffer byteBuffer = ByteBuffer.wrap(identifier);
-            UUID transactionId = new UUID(byteBuffer.getLong(), byteBuffer.getLong());
-            int sequence = byteBuffer.getInt();
-            Timestamp timestamp = new Timestamp(byteBuffer.getLong());
+                ByteBuffer byteBuffer = ByteBuffer.wrap(identifier);
+                UUID transactionId = new UUID(byteBuffer.getLong(), byteBuffer.getLong());
+                int sequence = byteBuffer.getInt();
+                Timestamp timestamp = new Timestamp(byteBuffer.getLong());
 
-            AuditEntry foundEntry = findByTransactionIdAndSequence(transactionId, sequence);
-            if (foundEntry == null) {
-                String dataHash = Hex.encodeHexString(auditTrail.dataHashes(identifier).send());
-                MissingAuditEntryViewModel missingEntry = new MissingAuditEntryViewModel(timestamp, transactionId, sequence, dataHash);
-                missingAuditEntries.add(missingEntry);
+                AuditEntry foundEntry = findByTransactionIdAndSequence(transactionId, sequence);
+                if (foundEntry == null) {
+                    String dataHash = Hex.encodeHexString(auditTrail.dataHashes(identifier).send());
+                    MissingAuditEntryViewModel missingEntry = new MissingAuditEntryViewModel(timestamp, transactionId, sequence, dataHash);
+                    missingAuditEntries.add(missingEntry);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return new ValidationReport(validatedAuditEntries, invalidatedAuditEntries, missingAuditEntries);
