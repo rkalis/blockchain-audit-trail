@@ -8,9 +8,9 @@ contract AuditTrail {
         return auditedTransactions.length;
     }
 
-    mapping(bytes28 => bytes32) public transactionHashes;
+    mapping(bytes28 => bytes32) public dataHashes;
 
-    event Audit(bytes28 transactionIdentifier, bytes32 transactionHash);
+    event Audit(bytes28 transactionIdentifier, bytes32 dataHash);
 
     modifier ownerOnly {
         require(msg.sender == owner);
@@ -25,14 +25,14 @@ contract AuditTrail {
         selfdestruct(owner);
     }
 
-    function audit(bytes28 transactionIdentifier, bytes32 transactionHash) external ownerOnly {
-        require(transactionHashes[transactionIdentifier] == 0, "A transaction can only be audited once");
-        transactionHashes[transactionIdentifier] = transactionHash;
+    function audit(bytes28 transactionIdentifier, bytes32 dataHash) external ownerOnly {
+        require(dataHashes[transactionIdentifier] == 0, "A transaction can only be audited once");
+        dataHashes[transactionIdentifier] = dataHash;
         auditedTransactions.push(transactionIdentifier);
-        emit Audit(transactionIdentifier, transactionHash);
+        emit Audit(transactionIdentifier, dataHash);
     }
 
-    function validate(bytes28 transactionIdentifier, bytes32 transactionHash) external view returns(uint8) {
-        return transactionHashes[transactionIdentifier] == transactionHash ? 0 : 1;
+    function validate(bytes28 transactionIdentifier, bytes32 dataHash) external view returns(uint8) {
+        return dataHashes[transactionIdentifier] == dataHash ? 0 : 1;
     }
 }
