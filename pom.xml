@@ -19,16 +19,271 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.incode.app</groupId>
-    <artifactId>contactapp-parent</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <parent>
+        <groupId>org.incode</groupId>
+        <artifactId>incode-parent</artifactId>
+        <version>1.16.2</version>
+        <relativePath/>
+    </parent>
 
-    <name>Incode App ContactApp (Parent)</name>
+    <groupId>org.incode.app</groupId>
+    <artifactId>contactapp</artifactId>
+    <version>1.2.0-SNAPSHOT</version>
+
+    <name>Incode App ContactApp</name>
 
     <packaging>pom</packaging>
 
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
+
+    <properties>
+        <isis.version>1.16.2</isis.version>
+
+        <incode-platform.version>1.16.2</incode-platform.version>
+        <isis-metamodel-paraname8.version>${incode-platform.version}</isis-metamodel-paraname8.version>
+
+        <isis-module-audit.version>${incode-platform.version}</isis-module-audit.version>
+        <isis-module-command.version>${incode-platform.version}</isis-module-command.version>
+        <isis-module-docx.version>${incode-platform.version}</isis-module-docx.version>
+        <isis-module-excel.version>${incode-platform.version}</isis-module-excel.version>
+        <isis-module-fakedata.version>${incode-platform.version}</isis-module-fakedata.version>
+        <isis-module-poly.version>${incode-platform.version}</isis-module-poly.version>
+        <isis-module-security.version>${incode-platform.version}</isis-module-security.version>
+        <isis-module-sessionlogger.version>${incode-platform.version}</isis-module-sessionlogger.version>
+        <isis-module-servletapi.version>${incode-platform.version}</isis-module-servletapi.version>
+        <isis-module-stringinterpolator.version>${incode-platform.version}</isis-module-stringinterpolator.version>
+        <isis-module-togglz.version>${incode-platform.version}</isis-module-togglz.version>
+
+        <isis-wicket-excel.version>${incode-platform.version}</isis-wicket-excel.version>
+        <isis-wicket-fullcalendar2.version>${incode-platform.version}</isis-wicket-fullcalendar2.version>
+        <isis-wicket-gmap3.version>${incode-platform.version}</isis-wicket-gmap3.version>
+
+        <isis-module-settings.version>1.15.1.1</isis-module-settings.version>
+        <incode-module-note.version>1.15.1.1</incode-module-note.version>
+        <incode-module-commchannel.version>1.15.1.1</incode-module-commchannel.version>
+
+
+        <jbcrypt.version>0.3m</jbcrypt.version>
+        <togglz.version>2.1.0.Final</togglz.version>
+
+        <lombok.version>1.16.10</lombok.version>
+
+<!--
+        <assertj-core.version>3.3.0</assertj-core.version>
+-->
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <warName>contacts</warName>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>Cloudbees snapshots</id>
+            <url>http://repository-estatio.forge.cloudbees.com/snapshot/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <modules>
-        <module>backend</module>
+        <module>app</module>
+        <module>dom</module>
+        <module>fixture</module>
+        <module>integtests</module>
+        <module>webapp</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>org.apache.isis.core</groupId>
+                <artifactId>isis</artifactId>
+                <version>${isis.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.metamodel.paraname8</groupId>
+                <artifactId>isis-metamodel-paraname8-dom</artifactId>
+                <version>${isis-metamodel-paraname8.version}</version>
+            </dependency>
+
+            <!-- this project's own modules -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>contactapp-app</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>contactapp-dom</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>contactapp-fixture</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>contactapp-integtests</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>contactapp-webapp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.audit</groupId>
+                <artifactId>isis-module-audit-dom</artifactId>
+                <version>${isis-module-audit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.command</groupId>
+                <artifactId>isis-module-command-dom</artifactId>
+                <version>${isis-module-command.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.docx</groupId>
+                <artifactId>isis-module-docx-dom</artifactId>
+                <version>${isis-module-docx.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.excel</groupId>
+                <artifactId>isis-module-excel-dom</artifactId>
+                <version>${isis-module-excel.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.fakedata</groupId>
+                <artifactId>isis-module-fakedata-dom</artifactId>
+                <version>${isis-module-fakedata.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.poly</groupId>
+                <artifactId>isis-module-poly-dom</artifactId>
+                <version>${isis-module-poly.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.security</groupId>
+                <artifactId>isis-module-security-dom</artifactId>
+                <version>${isis-module-security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mindrot</groupId>
+                <artifactId>jbcrypt</artifactId>
+                <version>${jbcrypt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.servletapi</groupId>
+                <artifactId>isis-module-servletapi-dom</artifactId>
+                <version>${isis-module-servletapi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.sessionlogger</groupId>
+                <artifactId>isis-module-sessionlogger-dom</artifactId>
+                <version>${isis-module-sessionlogger.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.settings</groupId>
+                <artifactId>isis-module-settings-dom</artifactId>
+                <version>${isis-module-settings.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.stringinterpolator</groupId>
+                <artifactId>isis-module-stringinterpolator-dom</artifactId>
+                <version>${isis-module-stringinterpolator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.module.togglz</groupId>
+                <artifactId>isis-module-togglz-glue</artifactId>
+                <version>${isis-module-togglz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-core</artifactId>
+                <version>${togglz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-junit</artifactId>
+                <version>${togglz.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-servlet</artifactId>
+                <version>${togglz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.togglz</groupId>
+                <artifactId>togglz-console</artifactId>
+                <version>${togglz.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.wicket.excel</groupId>
+                <artifactId>isis-wicket-excel-cpt</artifactId>
+                <version>${isis-wicket-excel.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.wicket.fullcalendar2</groupId>
+                <artifactId>isis-wicket-fullcalendar2-cpt</artifactId>
+                <version>${isis-wicket-fullcalendar2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.isisaddons.wicket.gmap3</groupId>
+                <artifactId>isis-wicket-gmap3-cpt</artifactId>
+                <version>${isis-wicket-gmap3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.incode.module.commchannel</groupId>
+                <artifactId>incode-module-commchannel-dom</artifactId>
+                <version>${incode-module-commchannel.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.incode.module.note</groupId>
+                <artifactId>incode-module-note-dom</artifactId>
+                <version>${incode-module-note.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>
