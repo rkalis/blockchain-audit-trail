@@ -81,7 +81,7 @@ public class AuditerServiceRepository {
 
             AuditEntry foundEntry = findByTransactionIdAndSequence(transactionId, sequence);
             if (foundEntry == null) {
-                String dataHash = Hex.encodeHexString(auditTrail.transactionHashes(identifier).send());
+                String dataHash = Hex.encodeHexString(auditTrail.dataHashes(identifier).send());
                 MissingAuditEntryViewModel missingEntry = new MissingAuditEntryViewModel(timestamp, transactionId, sequence, dataHash);
                 missingAuditEntries.add(missingEntry);
             }
