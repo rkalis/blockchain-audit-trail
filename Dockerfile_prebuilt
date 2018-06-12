@@ -1,0 +1,6 @@
+FROM jeanblanchard/tomcat:8
+LABEL maintainer="Rosco Kalis <roscokalis@gmail.com>"
+LABEL version="1.2.0-SNAPSHOT"
+
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
+COPY webapp/target/contactapp-webapp-1.2.0-SNAPSHOT/ /opt/tomcat/webapps/ROOT

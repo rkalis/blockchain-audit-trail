@@ -37,10 +37,15 @@ brew install truffle
 
 ## Locally running the demo application
 ### Prerequisites
-To run this application, Java and Maven need to be installed:
+To run this application with Jetty, Java and Maven need to be installed:
 ```
 brew cask install java
 brew install maven
+```
+
+To run this application with Docker, Docker needs to be installed:
+```
+brew cask install docker
 ```
 
 Next, be sure to add your custom configuration properties to the [isis.properties](webapp/src/main/webapp/WEB-INF/isis.properties) file:
@@ -49,11 +54,12 @@ application.ethereum.privateKey
 application.ethereum.networkUrl
 ```
 
-Alternatively, spin up a local Ganache instance. 
+Alternatively, spin up a local Ganache instance.
 
 One of these two steps need to be executed, **otherwise the audit trail implementation will not function**.
 
 ### Running the application
+#### Using Jetty
 First, clone this repository and navigate into the repository:
 ```
 git clone git@github.com:rkalis/blockchain-audit-trail.git
@@ -62,16 +68,27 @@ cd blockchain-audit-trail
 
 Next, build the application with Maven:
 ```
-mvn clean install -Djetty-console-war -DskipTests
+mvn clean install -Djetty-run -DskipTests
 ```
 
 Finally, navigate to the webapp folder and run the application with Jetty:
 ```
 cd webapp
-mvn jetty:run
+mvn jetty:run -Dorg.eclipse.jetty.annotations.maxWait=120
 ```
 
 After some time you should see `[INFO] Started Jetty Server` in your console and you should be able to access the application at `localhost:8080/admin` with credentials admin/pass.
+
+#### Using Docker
+There are two Dockerfiles for this repository, the first Dockerfile copies the full repository to the Docker image, and builds it inside the image. The second one (Dockerfile_prebuilt) assumes that the project has already been built with Maven, and will only copy the built files to the image. Both files use Tomcat 8 with Oracle Java 8 to run the application.
+
+The application can be run with Docker with the `dockerise.sh` or `dockerise_prebuilt.sh` scripts.
+```
+./dockerise.sh
+./dockerise_prebuilt.sh
+```
+
+**Note that the Ganache+Docker combination has not been tested.**
 
 ## Application guide
 The application is a simple contact management app. Contacts can be created and added to Groups. Every application interaction gets logged to the blockchain audit trail. In the Activity menu to the top right it is possible to see the entire audit trail, validate the audit trail against the blockchain, and search through it.
