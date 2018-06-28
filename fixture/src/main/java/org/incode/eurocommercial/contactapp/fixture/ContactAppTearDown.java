@@ -21,6 +21,8 @@ import javax.inject.Inject;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.applib.services.jdosupport.IsisJdoSupport;
 
+import org.incode.eurocommercial.contactapp.dom.audit.AuditEntry;
+import org.incode.eurocommercial.contactapp.dom.audit.ChangedProperty;
 import org.incode.eurocommercial.contactapp.dom.contacts.Contact;
 import org.incode.eurocommercial.contactapp.dom.country.Country;
 import org.incode.eurocommercial.contactapp.dom.group.ContactGroup;
@@ -40,6 +42,8 @@ public class ContactAppTearDown extends FixtureScript {
         deleteFrom(Contact.class);
         deleteFrom(ContactGroup.class);
         deleteFrom(Country.class);
+        deleteFrom(ChangedProperty.class);
+        deleteFrom(AuditEntry.class);
     }
 
     protected void deleteFrom(final Class cls) {

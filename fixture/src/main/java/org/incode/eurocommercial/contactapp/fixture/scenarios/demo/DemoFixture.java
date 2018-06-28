@@ -30,11 +30,7 @@ import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.isisaddons.module.excel.dom.ExcelFixture;
 
 import org.incode.eurocommercial.contactapp.dom.contacts.Contact;
-import org.incode.eurocommercial.contactapp.fixture.dom.contact.ContactTearDown;
-import org.incode.eurocommercial.contactapp.fixture.dom.country.CountryTearDown;
-import org.incode.eurocommercial.contactapp.fixture.dom.group.ContactGroupTearDown;
-import org.incode.eurocommercial.contactapp.fixture.dom.number.ContactNumberTearDown;
-import org.incode.eurocommercial.contactapp.fixture.dom.role.ContactRoleTearDown;
+import org.incode.eurocommercial.contactapp.fixture.ContactAppTearDown;
 
 import lombok.Getter;
 
@@ -51,11 +47,7 @@ public class DemoFixture extends FixtureScript {
     protected void execute(final ExecutionContext ec) {
 
         // zap everything
-        ec.executeChild(this, new ContactRoleTearDown());
-        ec.executeChild(this, new ContactNumberTearDown());
-        ec.executeChild(this, new ContactTearDown());
-        ec.executeChild(this, new ContactGroupTearDown());
-        ec.executeChild(this, new CountryTearDown());
+        ec.executeChild(this, new ContactAppTearDown());
 
         // load data from spreadsheet
         final URL spreadsheet = Resources.getResource(DemoFixture.class, getSpreadsheetBasename() + ".xlsx");
