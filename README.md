@@ -1,6 +1,8 @@
 # Blockchain Audit Trail
 
-This repository contains a fork of the [Incode Contact App](https://github.com/incodehq/contactapp), with a proof-of-concept blockchain audit trail implementation built on top of it. This blockchain audit trail is part of my Bachelor's thesis on validating audit trail data at the University of Amsterdam.
+This repository contains a fork of the [Incode Contact App](https://github.com/incodehq/contactapp), with a proof-of-concept blockchain audit trail implementation built on top of it. This blockchain audit trail is part of my Bachelor's thesis on validating audit trail data at the University of Amsterdam. The full version of this thesis is available [here](https://esc.fnwi.uva.nl/thesis/centraal/files/f1051832702.pdf), and a demo video of this implementation is available on [YouTube](https://youtu.be/nfekoK6pUqU)
+
+
 
 ## Contents
 
