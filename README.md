@@ -7,7 +7,7 @@ This repository contains a fork of the [Incode Contact App](https://github.com/i
 ## Contents
 
 ### Audit Trail
-The audit trail implementation can be found [here](dom/src/main/java/org/incode/eurocommercial/contactapp/dom/audit). It works by aggregating all changes inside a single database transaction, and saving this as an Audit Entry object. A hash of this Audit Entry object is then submitted to our smart contract using Web3j.
+The audit trail implementation can be found [here](dom/src/main/java/org/incode/eurocommercial/contactapp/dom/audit), with the most important functionality residing in the [AuditerServiceUsingBlockchain class](dom/src/main/java/org/incode/eurocommercial/contactapp/dom/audit/AuditerServiceUsingBlockchain.java). It works by aggregating all changes inside a single database transaction, and saving this as an Audit Entry object. A hash of this Audit Entry object is then submitted to our smart contract using Web3j.
 
 ### Smart Contract
 The Ethereum smart contract implementation can be found [here](truffle/contracts/AuditTrail.sol). This contract has the ability to audit Audit Entries by storing their identifier and data hash in a mapping. Next, it can validate these Audit Entries by comparing the stored identifier-hash pair against the one that is passed to the function. Finally, because it saves a list of all audited transaction identifiers, it is possible to check for missing Audit Entries in the application audit trail.
